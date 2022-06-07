@@ -1327,7 +1327,9 @@ input {
 .article-header {
   box-shadow: 0px 0px 8px #000000;
   background-color: var(--secondary-dark) !important;
-  background-image: url(/static/images/background.svg) !important;
+  background-image: url(images/background.svg) !important;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .fixed {
@@ -1417,12 +1419,6 @@ input {
   max-height: 300px;
 }
 
-@media all and (max-width: 1000px) {
-  .d3-component svg {
-    max-height: 200px;
-  }
-}
-
 .idyll-scroll-text .idyll-step {
   padding: 0rem 2rem;
 }
@@ -1444,4 +1440,21 @@ input {
 .icicle-plot rect.gradient {
   stroke-width: 0;
   fill: url(#gradient);
+}
+
+@media all and (max-width: 1000px) {
+  .d3-component svg {
+    max-height: 200px;
+  }
+
+  h2.dek {
+    font-size: 1.5em;
+  }
+}
+
+@media all and (max-width: 1240px) {
+  .aside {
+    position: static;
+    width: 100%;
+  }
 }
