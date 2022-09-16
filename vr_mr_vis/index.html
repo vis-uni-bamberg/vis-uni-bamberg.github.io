@@ -1,0 +1,128 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <script src="js/d3.v4.min.js"></script>
+        <script src="js/d3-selection-multi.v1.min.js"></script>
+        <script src="js/vrdata2.js"></script>
+        <script src="js/visualizationScript.js"></script>
+        <!-- <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet"> -->
+        <!-- <script src="http://vjs.zencdn.net/c/video.js"></script> -->
+        <style>
+        .yLegend
+        {
+            fill:black;
+            text-anchor: end;
+            dominant-baseline: middle;
+        }
+        .heading{
+            text-align:left;
+            
+        }
+        .footer{
+            text-align:center;
+            background: lightgray;
+            /* padding:0px; */
+            margin:0px;
+
+        }
+        .header{
+            text-align:center;
+            margin-top: 10px;
+        }
+        .divcenter{
+            text-align:center;
+
+        }
+
+
+        /* .video-js {
+            position: relative !important;
+            width: 100% !important;
+            height: auto !important;
+        } */
+        </style>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+        <div class="header">
+            <span style="font-size:12pt;">Supplementary Material for</span><br />
+            <span style="font-size:16pt;">A Design and Application Space for Visualizing User Sessions of Virtual and Mixed Reality Environments</span><br/>
+
+            <div style="font-size: 12pt;"><span >Agarwal, S., Auda, J., Schneegass, S. and Beck, F., (2020). A Design and Application Space for Visualizing User Sessions of Virtual and Mixed Reality Environments.  In the proceedings of Vision, Modeling, and Visualization. <a href="https://s-agarwl.github.io/publication/Agarwal2020Design">Details</a></span></div>
+        </div><br />
+            <div class="container-fluid">
+                    <div class="row " height = "870px">
+                        <div class= "col-sm-12 divcenter" id="mainDiv" >
+                                <svg id="mainVisualization" viewBox="0 0 1940 850" >
+                                    <defs>
+                                            <!-- arrowhead marker definition -->
+                                            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+                                                markerWidth="6" markerHeight="6"
+                                                orient="auto-start-reverse">
+                                                <path d="M 0 0 L 10 5 L 0 10 z" />
+                                            </marker>
+                                    </defs>
+                                </svg>
+                        </div>
+                        
+                    </div>
+                    <div class="row " height = "600px">
+                        <div style="width:33%; display: inline-block; height:100px"></div>
+                        <div class= "divcenter" style="padding:10px; margin-top: 0px; width:33%; display: inline-block">
+                            <div class="divcenter" style="width:100%">Scene View of Virtual World</div>
+                            <video id="video1" controls style="width:100%; border:1px solid black; background:lightgray; " onseeking="seeking1()" onseeked="seeking1()">
+                                <source id="videoSource" src="videos/p1_train.mp4" type="video/mp4">
+                                Your browser does not support HTML5 video.
+                            </video>
+                            <!-- <div  style="width:100%;  height:340px ">
+                                <video id="video1" class="video-js vjs-default-skin"  width="100%" height="300"
+                                    data-setup='{"fluid": true, "controls" : true, "autoplay" : false, "preload" : "auto"}'>
+                                    <source  src="realStudy/p1/p1_train.mp4" type="video/mp4">
+                                </video>
+                            </div> -->
+                            <!-- <br/>
+                            <div class="heading">Trajectory View</div>
+                            <div style="width:100%;  height:340px ; border: 1px solid black">
+
+                            </div> -->
+                        </div>
+                    </div>
+            </div>
+        <div >
+            
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="footer">
+            Best viewed in Google Chrome at 1920 x 1440 resolution
+        </div>
+    </body>
+    <script>
+        window.onload = function() 
+        {
+            drawVisualization();
+
+        };
+    
+    </script>
+
+    <!-- <audio id="p1Train" src="realStudy/p1/p1_train_final.mp3" crossorigin="anonymous"></audio>
+    <audio id="p1Test" src="realStudy/p1/p1_test_final.mp3" crossorigin="anonymous"></audio>
+    <audio id="p5Train" src="realStudy/p5/p5_train_final.mp3" crossorigin="anonymous"></audio>
+    <audio id="p5Test" src="realStudy/p5/p5_test_final.mp3" crossorigin="anonymous"></audio>
+    <audio id="p11Train" src="realStudy/p11/p11_train_final.mp3" crossorigin="anonymous"></audio>
+    <audio id="p11Test" src="realStudy/p11/p11_test_final.mp3" crossorigin="anonymous"></audio> -->
+
+    <!-- <div>
+        <button onclick="document.getElementById('p1Train').play()">Play &#9658;</button>
+        <button onclick="document.getElementById('p1Train').pause()">Pause ||</button>
+        <button onclick="document.getElementById('p1Test').play()">Play &#9658;</button>
+        <button onclick="document.getElementById('p1Test').pause()">Pause ||</button>
+    </div> -->
+
+</html>
