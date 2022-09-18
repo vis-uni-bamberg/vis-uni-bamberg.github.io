@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html height="100vh">
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+
+    <script src="js/d3.js" charset="utf-8"></script>
+    <script src="js/d3.tip.js" charset="utf-8"></script>
+    <script src="js/filedrop-min.js" charset="utf-8"></script>
+    <script src="js/compatibility.js" charset="utf-8"></script>
+    <script src="js/jquery-1.12.4.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/csrankings.js"></script>
+    <script src="js/csrankingData.js"></script>
+    <script src="js/compResearch.js"></script>
+    <script src="js/dataSets.js"></script>
+    <link href="css/d3.tip.css" rel="stylesheet" type="text/css">
+    <link href="css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="css/material.min.css" rel="stylesheet" type="text/css">
+    <link href="css/dataTables.material.min.css" rel="stylesheet" type="text/css">
+    <link href='fonts/opensans.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/w3.css">
+    <link href="open-iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">
+    <link href="css/whhg.css" rel="stylesheet">
+
+    <script src="js/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+
+    <!-- <link href='css/style.css' rel='stylesheet' type='text/css'> -->
+    <link href='css/style_largefont.css' rel='stylesheet' type='text/css'>
+    <title>Set Visualization</title>
+    <style>
+        .conceptStatsBar
+        {
+            fill: grey;
+            stroke: grey;
+            stroke-width: 1;
+        }
+       
+        .summaryArrow path {
+            fill: #cccccc;
+        }
+        
+        .summaryArrow circle, .summaryArrow line, .summaryArrowHorizontal circle, .summaryArrowHorizontal line{
+            stroke: #cccccc;
+            
+        }
+        .summaryArrow text{
+            fill: #cccccc;
+        }
+        .summaryArowHovered path{
+            fill: black;
+            fill-opacity: 0.5;
+        }
+        
+        .summaryArowHovered circle, .summaryArowHovered line{
+            /* stroke: black; */
+            stroke: #7F7F7F;
+            stroke-opacity: 1;
+            
+        }
+        .summaryArowHovered text{
+            fill: black;
+        }
+        .diffEdgeHidden
+        {visibility: hidden;}
+
+        .borderDiv{
+            border: 1px solid black;
+            /* border-top-left-radius: 2px;
+            border-top-right-radius: 2px; */
+            border-radius:5px;
+        }
+        .divBackground{
+            /* background-color:#cccccc;
+            color:black; */
+            /* background-color:rgb(73, 73, 73);
+            color:white;
+            font-weight: bold; */
+        }
+        .divBorderNotBottom{
+            /* border: 1px solid black;
+            border-bottom: 0px solid white; */
+
+            border: 0px solid black;
+            /* border-bottom: 1px solid black; */
+        }
+
+        div.dataTables_wrapper div.dataTables_filter input{
+            max-height: 20px;
+        }
+        .top-row {
+        @include make-row();
+        height: calc(100vh - 370px);
+        min-height: 100px;
+        /* max-height: calc(100vh - 320px); */
+        }
+        .dataTableDiv{
+            /* min-width: 400px; */
+        }
+        .dataTableNameDiv{
+            width: 200px;
+        }
+        .dataTables_wrapper.no-footer .dataTables_scrollBody {
+            border:none;
+        }
+        .dataTables_scroll{
+            padding-top: 0px;
+        }
+        .sorting{
+            padding:0px;
+        }
+        .table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc, table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>td.sorting {
+            padding-top:2px;
+            padding-bottom:2px
+        }
+        #listExample_filter label{
+            margin-bottom:0px;
+        }
+
+
+
+#adjustIcon:hover {
+  /* background-color:#cccccc; */
+  color:#707070;
+}
+
+.element-view-title {
+    display: inline;
+    background-color: #636363;
+    color: white;
+    padding: 2px 20px 0px 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    margin-bottom: 0px;
+    font-weight: bold;
+    /* font-size: 10pt; */
+    border-bottom: 1px solid #636363;
+}
+/* .align-items-center{
+    padding-top:2px;
+} */
+
+.svgSelectedConcept{
+    /* stroke-opacity: 0; */
+    /* stroke:rgb(255, 230, 153);
+     */
+     stroke: #ffc107;
+    stroke-width: 2px;
+    /* -webkit-filter: drop-shadow( 0px 0px 2px rgb(255, 230, 153)); */
+  /* filter: drop-shadow( 5px 5px 5px rgb(255, 230, 153));
+   */
+   filter:url(#blurMe);
+}
+table.dataTable thead th, table.dataTable thead td {
+    padding: 10px 18px;
+    border-bottom: 1px solid #111111;
+}
+table.dataTable thead .sorting_asc {
+  background: url("images/sort_asc.png") no-repeat center left;
+  padding-right: 4px;
+}
+table.dataTable thead .sorting_desc {
+  background: url("images/sort_desc.png") no-repeat center left;
+  padding-right: 4px;
+}
+table.dataTable thead .sorting {
+  background: url("images/sort_both.png") no-repeat center left;
+  padding-right: 4px;
+}
+table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after,
+table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_desc_disabled:before {
+    visibility: hidden;
+} 
+
+@font-face {
+    font-family: 'ModernPictogramsNormal';
+    src: url('fonts/modernpics-webfont.eot');
+    src: url('fonts/modernpics-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/modernpics-webfont.woff') format('woff'), url('fonts/modernpics-webfont.ttf') format('truetype'), url('fonts/modernpics-webfont.svg#ModernPictogramsNormal') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#selectionTags .tagDiv {
+    border-radius: 7px;
+    float: left;
+    color: white;
+    margin: 2px 8px 4px 0;
+    min-width: 27px;
+    min-height: 27px;
+    border: 2px solid white;
+    box-shadow: 1px 1px 5px #AAAAAA;
+    margin-left: 2px;
+    margin-right:2px;
+
+    padding:0px 3px 0px 3px;
+
+}
+.timestep, .move{
+    /* background-color:grey; */
+    background-color:black;
+}
+.conceptSelection{
+    background-color:black;
+}
+.degree{
+    background-color:black;
+}
+
+.symbol {
+    font-family: 'ModernPictogramsNormal';
+    font-size: 16pt;
+    margin: 0 2px;
+}
+
+#selectionTags .selector_content {
+    border-left: 1px solid white;
+    padding: 2px;
+}
+#selectionTags .tagDiv .text {
+    background: white;
+    opacity: 1;
+    color: black;
+    padding: 1px 3px;
+}
+#selectionTags .tagDiv div {
+    display: inline-block;
+}
+
+#selectionTags .tagDiv .remove:after {
+    margin: 0 2px;
+    font-family: 'ModernPictogramsNormal';
+    content: "X";
+    font-size: 12pt;
+}
+
+i{
+    padding:0px 2px 0px 2px;
+}
+.icon-remove{
+    font-size:xx-small;
+}
+.icon-remove:hover{
+    color:darkgrey;
+}
+.text{
+    font-size:10pt;
+}
+.icon-info-sign:hover{
+    color:#707070;
+}
+.tagIcons
+{
+    padding-left:0px;
+    vertical-align:text-top;
+}
+/* #selectionStatisticsSVG text{
+    dominant-baseline:hanging;
+} */
+
+rect.hbart1 
+{
+    mask: url(#mask-stripet1);
+}
+rect.hbart2 {
+mask: url(#mask-stripet2);
+}
+
+.statsBarValue{
+    font-size:9pt;
+}
+.legendElementPosition
+{
+    display: inline;
+    /* position: absolute; */
+}
+.colorDiv
+{
+    border-radius: 5px;
+    border:1px solid black;
+    vertical-align: sub;
+}
+.w3-modal > .w3-modal-content > .w3-container > p {
+  word-wrap: break-word;
+}
+/* screenshots */
+.fontsize1
+{
+    font-size:18pt;
+}
+.fontsize2
+{
+    font-size:14pt;
+}
+.axisLabel
+{
+    font-size:9pt;
+}
+.axis{
+    font-size:11pt;
+}
+
+/* .fontsize1
+{
+    font-size:14pt;
+}
+.fontsize2
+{
+    font-size:10pt;
+}
+.axisLabel
+{
+    font-size:8pt;
+}
+.axis{
+    font-size:9pt;
+} */
+.scrollbar
+{
+    overflow: auto;
+  white-space: nowrap;
+}
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 50px;
+  height: 50px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.boundingSetBox
+{
+    stroke-width:1px;
+    stroke:black;
+}
+
+#listExample tr{
+    height:30px;
+}
+.sumColumn{
+    width:40px;
+}
+
+#navigationLegend{
+    margin-left:15px;
+}
+
+table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc, table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>td.sorting {
+padding-right:5px;
+}
+    
+    </style>
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" >
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
+</head>
+
+<body class="fontsize2">
+
+        <div id="id01" class="w3-modal">
+            <div class="w3-modal-content w3-animate-top">
+                <header class="w3-container w3-black"> 
+                <span onclick="document.getElementById('id01').style.display='none'" 
+                class="w3-button w3-display-topright">&times;</span>
+                <h2>Dataset Information</h2>
+                </header>
+                <div class="w3-container">
+                    <p></p>
+                    <div id="datasetInformation"><tspan></tspan></div>
+                    <tspan ># base sets: </tspan><tspan id="numSets" class="numSets"></tspan>
+                    <tspan style = "padding-left: 10px"># elements: </tspan><tspan id="numObjects" class="numObjects"></tspan>
+                    <tspan style = "padding-left: 10px"># timesteps: </tspan><tspan id="numTimesteps" class="numTimesteps"></tspan>
+                    <tspan style = "padding-left: 10px"># intersections: </tspan><tspan id="numIntersections" class="numIntersections"></tspan>
+
+                    <p></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="paperInfo" class="w3-modal">
+            <div class="w3-modal-content w3-animate-top">
+                <header class="w3-container w3-black"> 
+                <span onclick="document.getElementById('paperInfo').style.display='none'" 
+                class="w3-button w3-display-topright">&times;</span>
+                <h2>Publications:</h2>
+                </header>
+                <div class="w3-container">
+                    <p></p>
+                    <ol id="paperList">
+
+                    </ol>
+
+                    <p></p>
+                </div>
+            </div>
+        </div>
+
+        
+            
+      
+        <!-- <div class="modal fade" id="paperInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Object Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ol id="paperList">
+
+                    </ol>
+                </div>
+                </div>
+            </div>
+            </div> -->
+
+        <!-- <div class="sticky-top bg-dark" style="color:white;"> -->
+        <div class="top " style="color:black;">
+            <div class="container-fluid">
+                <div class="row ">
+                    <div class= "col-sm-12" id="topTwoRows">
+                        <div class="container-fluid">
+                                <div class="row" style="border-bottom:1px solid lightgrey;">
+                                    <!-- <div class="col-sm-3 align-items-right vertical-center"></div> -->
+                                    <div class="col-sm-8 align-bottom"  style="margin-top:5px;">
+                                        
+                                            <div  class=" align-bottom fontsize1">Visualizing Sets and Changes in Membership Using Layered Set Intersection Graphs</div>
+                                            <!-- <div  class=" align-bottom fontsize1">DynaSet: Visualizing Changes in Set Membership of Elements Using Set Intersection Graphs</div> -->
+                                            <div style="font-size: 12pt;">
+                                                <span >Agarwal, S., Tkachev, G., Wermelinger, M. and Beck, F., 2020. Visualizing Sets and Changes in Membership Using Layered Set Intersection Graphs. VMV: Vision, Modeling, and Visualization, pp.69-78. <a href="https://s-agarwl.github.io/publication/Agarwal2020VisualizingSets">Details</a>
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="loader" id="loader" style="display:none; position: absolute;z-index:999;left:50%" ></div>
+                                            
+                                                <img src="images/loading.gif" id="loader2" style="display:none; position: absolute;z-index:999;left:50%" />
+                                            
+                                    </div>
+                                    <div class="col-sm-4 align-items-right vertical-center"><label style="margin-right:5px;">Select Dataset:</label> 
+                                        <select id="datasetDropDown" style="margin-top:5px;">
+                                            <option value="sample" selected>Sample Dataset of Companies and Products
+                                            <option value="compResearch_small">Computer Science Research (Sampled)
+                                            <option value="compResearch">Computer Science Research
+                                            <option value="linux" >Linux GitHub Repository
+                                            <option value="conf">IEEE VIS - conference
+                                            <option value="keyword">IEEE VIS - keywords
+                                            
+                                            <option value="vehicle" >Vehicle defects
+                                            <option value="movieactor">Movie genre and actors
+                                            <option value="moviedirector">Movie genre and directors
+                                        </select>
+                                        <!-- <span class="oi oi-info" title="Dataset information" style="margin-left: 5px;" onclick="displayDataSetInformation()"></span> -->
+                                        <i class="icon-info-sign" title="Dataset information" style="margin-left: 5px; font-size:18px; vertical-align: sub;" onclick="displayDataSetInformation()"></i>
+                                        
+                                        <br/>
+                                        <div style="padding:0;">
+                                            <tspan >#sets: </tspan><tspan id="numSets" class="numSets"></tspan>
+                                            <tspan style = "padding-left: 10px">#elements: </tspan><tspan id="numObjects" class="numObjects"></tspan>
+                                            <tspan style = "padding-left: 10px">#timesteps: </tspan><tspan id="numTimesteps" class="numTimesteps"></tspan>
+                                            <tspan style = "padding-left: 10px">#intersections: </tspan><tspan id="numIntersections" class="numIntersections"></tspan>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <!-- <div class="row">
+                                    <div class="col-sm"><br/></div>
+                                </div> -->
+                                <div class="row">
+                                    <div class="col-sm"><br/></div>
+                                </div>
+                                <div class="row align-items-center" style="padding-left: 15px;border-bottom:1px solid lightgrey;" >
+                                        <div style="float: left;" >Selectors: </div>
+                                        <div id="selectionTags"  style="padding: 4px 0px 4px 4px;">
+                                            <div id="timeTag" style="float: left;">
+                                            </div>
+                                        </div>
+                                        <div id="selectionObjectsNum"></div>
+                                        
+                                </div>
+                            </div>
+                    </div>
+                
+
+                    <!-- <div class="col-sm-3" id="topTimelineContainer"> -->
+                    <div class="row" style="padding:5px 5px 0px 5px; display: none;">
+                    <!-- <div class="col-sm-3" style="padding:5px 5px 0px 5px; display: none;"> -->
+                        <div class="container-fluid" >
+                            <div class="row" id="temporalHeading">
+                                <div class="col-sm divBackground divBorderNotBottom">
+                                    <div class="element-view-title">Temporal Distribution</div>
+                                </div>
+                            </div>
+                            <div class="row borderDiv">
+                                <div class="container-fluid" >
+                                    <div class="row " >
+                                        <select id="topTimelineDropdown" class="axis" style="margin-top:1px;margin-left:15px;">
+                                            <option value="presence" selected>Presence of elements
+                                            <option value="value">Range of values
+                                        </select>
+                                    </div>
+                                    <div class="row " id="topTimelineContainerRow">
+                                        
+                                        <div class="col-sm nopadding" id="topTimelineContainer" style="display:block;">
+                                            <div id="topTimeline" ></div>
+                                        </div>
+                                        <div class="col-sm nopadding" id="topRangeContainer" style="padding-left:0px;display:none;">
+                                            <div id="topRange" ></div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                        </div>
+                            <!-- <div id="topTimeline" class="h-100"></div> -->
+                    </div>
+                        
+                    <!-- <div class="col-sm-3"></div>
+                    <div class="col-sm-6 align-items-center vertical-center"  style="margin-top:5px;">
+                        
+                                <div  class="text-center" style="font-size: 26px;">DynaSet: Visual Exploration of Dynamic Overlapping Sets</div>
+
+                       
+                    </div>
+                    <div class="col-sm-3 align-items-center vertical-center"><label style="margin-right:5px;">Select Dataset:</label> 
+                        <select id="datasetDropDown" style="margin-top:5px;">
+                            <option value="sample" selected>Sample
+                            <option value="conf">IEEE VIS - conference
+                            <option value="keyword">IEEE VIS - keywords
+                            <option value="linux" >Linux GitHub
+                            <option value="vehicle" >Vehicle defects
+                            <option value="movieactor">Movie genre and actors
+                            <option value="moviedirector">Movie genre and directors
+                        </select>
+                        <i class="icon-info-sign" title="Dataset information" style="margin-left: 5px; font-size:18px; vertical-align: sub;" onclick="displayDataSetInformation()"></i>
+                        <br/>
+                        <div style="padding:0;">
+                            <tspan ># base sets: </tspan><tspan id="numSets" class="numSets"></tspan>
+                            <tspan style = "padding-left: 10px"># objects: </tspan><tspan id="numObjects" class="numObjects"></tspan>
+                            <tspan style = "padding-left: 10px"># timesteps: </tspan><tspan id="numTimesteps" class="numTimesteps"></tspan>
+                            <tspan style = "padding-left: 10px"># intersections: </tspan><tspan id="numIntersections" class="numIntersections"></tspan>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid" style=" padding-top: 5px;">
+                <!-- <div class="row align-items-center" style="padding-left: 15px;">
+                    <h5 >Current Selection: </h5>
+                    <div id="selectionTags"  style="padding: 4px 0px 4px 4px;">
+                        <div id="timeTag" style="float: left;">
+                        </div>
+                    </div>
+                    <div id="selectionObjectsNum"></div>
+                </div> -->
+                <div class="row top-row" style="width:100%; margin-left:5px">
+                  <!-- <div class="col-sm-10 " style="padding-right: 0;"> -->
+                    <div  style="padding-right: 0; width:76%">
+                        <div class="container-fluid d-flex flex-column" id="setView" style="height:990px">
+                            <div class = "row" id="colorLegendRow">
+                                <div class="col-sm divBackground divBorderNotBottom " >
+                                    <div class="element-view-title">Set Intersection View</div>
+                                    <div id="colorLegend" class="justify-content-center" style="display:inline-block;padding-left:15px;"></div>
+
+                                </div>
+                                <!-- <div class="col-sm-10  d-flex" id="colorLegend" ></div> -->
+                                <!-- <div class="col-sm-10  d-flex justify-content-center"  > -->
+                                <!-- </div> -->
+
+                            </div>
+                            <div class = "row borderDiv flex-fill d-flex">
+                                    <div class="container-fluid d-flex h-100 flex-column">
+                                        <div class = "row flex-fill d-flex">
+                                            <div class="col-sm" >
+                                                <div id="mainVisualization" class="svgContainer flex-fill d-flex h-100"> </div>
+                                            </div>
+                                        </div>
+                                        <div class = "row">
+                                            <!-- <div class="col-sm"> -->
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                            <div class="col-sm-3">
+                                                              Sort elements by:  
+                                                              <select id="orderDropDown" style="margin-left: 5px;">
+                                                                    <option value="type" selected>Type
+                                                                    <option value="weight" >Weight
+                                                                    <option value="list">Order in Element List
+                                                                </select>
+                                                                <!-- <br/> -->
+                                                                <!-- <input type="checkbox" id="showExclusive" value="showExclusive" > hide non-exclusive membership -->
+                                                                <!-- <form>
+                                                                    <div class="radio">
+                                                                        <label><input type="radio" name="optradio" checked>Option 1</label>
+                                                                    </div>
+                                                                    <div class="radio">
+                                                                        <label><input type="radio" name="optradio">Option 2</label>
+                                                                    </div>
+                                                                    <div class="radio disabled">
+                                                                        <label><input type="radio" name="optradio" disabled>Option 3</label>
+                                                                    </div>
+                                                                </form> -->
+                                                            </div>
+                                                            <div class="col-sm-6"><div id="svgTextConsole"></div> </div>
+                                                            <!-- <div class="col-sm-3 " style="padding-bottom: 5px;padding-right: 10px;text-align: right;" ><figure style="margin:0 0 0rem;"><img id="adjustIcon" src="images/adjust2.png" width="30px" height="30px" style="margin:2px" /></figure></div> -->
+                                                            <div class="col-sm-3 " style="padding-bottom: 0px;padding-right: 10px;text-align: right; font-size:22px; vertical-align: top;" ><i id="adjustIcon" class="icon-resize"></i></div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            <!-- </div> -->
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="row" style="margin-top:5px;">
+                                    <div class="col-sm" style="padding-left: 0px;padding-right:0px;">
+                                            <div class="container-fluid">
+                                                    <div class = "row">
+                                                        <div class="col-sm-1 divBackground divBorderNotBottom" ><div class="element-view-title">Timeline</div></div>
+                                                        <!-- <div class="col-sm-11  d-flex justify-content-center" id="colorLegend" ></div> -->
+                                                        
+                                                        <!-- <div class="col-sm-1 " ></div> -->
+
+                                                    </div>
+                                                    <div class = "row borderDiv scrollbar">
+                                                            <div id="navigation" style="padding-left: 10px;">
+                                                                <div id="navigationHeader">
+                                                                </div>
+                                                                <table>
+                                                                    <tr>
+                                                                        <td> Diffs: </td>
+                                                                        <td>
+                                                                            <div id="diffPreviewContainerRow"> </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td> Cardinality Dist.: </td>
+                                                                        <td>
+                                                                            <div id="individualVersionRow"></div>
+                                                                        </td>
+                                                                        <td><div id="buttonPanel"> </div></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Timesteps:</td>
+                                                                        <td>
+                                                                            <div id="selectionBar"></div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    
+                                                                </table>
+                                                            </div>
+                                                    </div>
+                                                    <div class="row" >
+                                                        <div class="col-sm-4"></div>
+                                                        <div class="col-sm-8">
+                                                            <div class="footer">
+                                                                <center>Use &#x2190; or key A to go left and &#x2192; or key D to go right while navigating across timesteps. Click-and-drag to pan and wheel to zoom.</center>
+                                                                <center><label>(Best viewed in Google Chrome at 1920x1440 resolution.)</label></center>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                    </div>
+                                </div>
+                        </div>
+                        
+                  </div>
+                  <!-- <div class="col-sm-2" style="padding:0px 5px 0px 5px"> -->
+                    <div  style="padding:0px 5px 0px 5px; width:24%">
+                        <div class="container-fluid " >
+                                <div id = "currentSelection">
+                                    
+                                        <!-- <div class = "row">
+                                                <div class="col-sm divBackground divBorderNotBottom" ><div id="topTimeline"></div></div>
+                                        </div> -->
+                                    <div class = "row">
+                                            <div class="col-sm divBackground divBorderNotBottom" ><div class="element-view-title">Degree Distribution</div></div>
+                                    </div>
+                                    <div class = "row borderDiv" >
+                                            <div class="container-fluid " >
+                                                <!-- <div class="row">
+                                                    <div id="selectionTags" style="padding: 4px 0px 4px 4px;">
+                                                        <div id="timeTag" style="float: left;">
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+                                                <div class="row">
+                                                    <!-- <div id="selectionObjectsNum"></div> -->
+                                                    <div id="selectionStatistics" style="padding-top: 5px; width:100%;">
+                                                        <svg id="selectionStatisticsSVG" style="padding-left:0px; padding-right:0px; width:100%;"></svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <!-- <div class="row">
+                                            <div id="selectionStatistics">
+                                                <svg id="selectionStatisticsSVG" style="width:100%;"></svg>
+                                            </div>
+                                    </div> -->
+                                </div>
+                            <div class = "row " style="padding-top: 0px;margin-top:5px;">
+                                <div class="col-sm divBackground divBorderNotBottom" >
+                                    <div class="element-view-title">Element List
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "row borderDiv dataTableDiv" style="padding:1px; height:940px">
+                            <!-- <div class = "row borderDiv dataTableDiv" style="padding:1px; height:850px"> -->
+                                    <div class="container-fluid" style="padding:0px 0px 0px 0px" >
+                                            <div class = "row" >
+                                            </div>
+                                            <div class = "row">
+                                                <div class="col-sm">
+                                                   
+
+                                                    <table id="listExample" class="hover" width="100%"></table>
+                                                </div>
+                                            </div>
+                                    </div>
+                                
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+
+                
+                
+              </div>
+            
+    <!-- <table width="100%" style="padding-left:5px;">
+        <tr>
+            <td width="70%">
+                <center>
+                    <h1>DynaSet : Visualizing Set Dynamics Using Formal Concept Analysis</h1>
+                </center>
+            </td>
+            <td style="padding-left: 10px">
+                 <label>Select Data:</label> <select id="datasetDropDown">
+            <option value="sample" selected>Sample
+                <option value="conf">IEEE VIS - conference
+                    <option value="keyword">IEEE VIS - keywords
+                        <option value="linux" >Linux GitHub
+                        <option value="vehicle" >Vehicle defects
+                        <option value="movieactor">Movie genre and actors
+                        <option value="moviedirector">Movie genre and directors
+                        </select> 
+                    </td>
+        </tr>
+        <tr>
+            <td>
+                 <div id="mainVisualization" class="svgContainer"> </div> -->
+                <!-- <svg id = "legendSVG"></svg> -->
+
+    
+    <script>
+    //PersonA- setting height not working currently
+    // $("body").height($(document).height()) ;
+
+    function displayDataSetInformation()
+    {
+        document.getElementById('id01').style.display='block';
+
+    }
+    
+   
+    window.onload = function()
+    {
+        // window.dataSets.push(csRankings());
+        // window.datasetInformation.push("");
+
+        visObject = DynaSet().loadHarcodedDatasetFromJavascriptObject(0);
+        // visObject = DynaSet().loadHarcodedDatasetFromJavascriptObject(window.dataSets.length-1);
+  
+
+        $('#datasetDropDown').on('change', function()
+        {
+            var x = document.getElementById("datasetDropDown");
+            var tempIndex = -1;
+            if (x.value == "sample")
+            {
+                tempIndex = 0;
+            }
+            else if (x.value == "conf")
+            {
+                tempIndex = 1;
+            }
+            else if (x.value == "keyword")
+            {
+                tempIndex = 2;
+            }
+            else if (x.value == "linux")
+            {
+                tempIndex = 3;
+            }
+             else if (x.value == "movieactor")
+            {
+                tempIndex = 4;
+            }
+             else if (x.value == "moviedirector")
+            {
+                tempIndex = 5;
+            }
+             else if (x.value == "vehicle")
+            {
+                tempIndex = 6;
+            }
+            if (x.value == "compResearch")
+            {
+                tempIndex = 7;
+            }
+
+            if (x.value == "compResearch_small")
+            {
+                tempIndex = 8;
+            }
+            
+            $.blockUI();
+            setTimeout(function() {
+                visObject.loadHarcodedDatasetFromJavascriptObject(tempIndex);
+                $.unblockUI();
+            }, 0);
+            
+        });
+
+        // $('#topTimelineDropdown').on('change', function()
+        // {
+        //     var x = document.getElementById("topTimelineDropdown");
+            
+        //     if (x.value == "presence")
+        //     {
+        //         d3.select("#topTimelineContainer").attr("style","display:block");
+        //         d3.select("#topRangeContainer").attr("style","display:none");
+        //     }
+        //     else  if (x.value == "value")
+        //     {
+        //         d3.select("#topTimelineContainer").attr("style","display:none");
+        //         d3.select("#topRangeContainer").attr("style","display:block");
+        //     }
+        // });
+
+    };
+    </script>
+    <pre id="mypre"></pre>
+</body>
+<script src="js/dynamicfca.js"></script>
+<!-- <script src="js/dynamicfca_authorconf.js"></script> -->
+<!-- <script src="js/dynamicfca_vehicle.js"></script> -->
+<!-- <script src="js/dynamicfca_largefont.js"></script> -->
+<script src="js/cluster.js"></script>
+<!-- <script src="js/figue.js"></script> -->
+<div id="arrowHead">
+        <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <!-- <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="userSpaceOnUse"> -->
+                  <path d="M0,0 L0,6 L9,3 z" fill="#CCCCCC" />
+                </marker>
+                <marker id="arrowhighlighted" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <!-- <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="userSpaceOnUse"> -->
+                  <path d="M0,0 L0,6 L9,3 z" fill="black" />
+                </marker>
+
+                <!-- <pattern id="pattern-stripet1" 
+                    width="4" height="4" 
+                    patternUnits="userSpaceOnUse"
+                    patternTransform="rotate(0)">
+                    <rect width="2" height="4" transform="translate(0,0)" fill="white"></rect>
+                </pattern>
+                <mask id="mask-stripet1">
+                    <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-stripet1)" />
+                </mask>  -->
+
+                <!-- <pattern id="pattern-stripet2" 
+                width="8" height="8" 
+                patternUnits="userSpaceOnUse"
+                patternTransform="rotate(0)">
+                <rect width="2" height="4" transform="translate(0,0)" fill="white" style="stroke-dasharray: 20,5;" ></rect>
+                
+            </pattern> -->
+            <!-- <pattern id="pattern-stripet2" width="10" height="10" patternTransform="rotate(45 0)" patternUnits="userSpaceOnUse">
+                    <line x1="0" y1="0" x2="0" y2="10" style="stroke:black; stroke-width:1" />
+                   
+                  </pattern> -->
+                  <pattern id="pattern-stripet1" height="10" width="6" patternUnits="userSpaceOnUse"  patternTransform="rotate(90)">
+                        <rect x="0", y="0", width="6" height="10" fill="grey"></rect>
+                        <line x1="0" y1="4" x2="3" y2="4" stroke-width="2" stroke="white"/>
+                      </pattern>
+                  <pattern id="pattern-stripet2" height="10" width="20" patternUnits="userSpaceOnUse"  patternTransform="rotate(90)">
+                        <rect x="0", y="0", width="20" height="10" fill="grey"></rect>
+                        
+                    <line x1="0" y1="4" x2="16" y2="4" stroke-width="2" stroke="white"/>
+                      </pattern>
+
+            <mask id="mask-stripet2">
+                <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-stripet2)" />
+            </mask> 
+        </defs>
+</div>
+<div id = "blurFilter">
+    <filter id="blurMe">
+            <feGaussianBlur stdDeviation="3"/>
+    </filter>
+</div>
+</html>
+ <!-- <line width="100%" style="stroke-dasharray: 20,5; stroke:black;"></line> -->
