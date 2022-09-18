@@ -1,0 +1,1881 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="js/d3.v4.min.js"></script>
+        <script src="js/d3-selection-multi.v1.min.js"></script>
+        <!-- <script src="js/svg-dropdown.js"></script> -->
+        
+        <!-- <script src="js/vrdata2.js"></script> -->
+        <!-- <script src="data/pommermanDataTeam1.js"></script> -->
+        <!-- <script src="data/pommermanDataTeam2.js"></script> -->
+        <!-- <script src="data/pommermanDataTeam3.js"></script> -->
+        <script src="js/visualizationScript.js"></script>
+        <!-- <script src="data/sampleData.js"></script> -->
+        <script src="data/hako_navo.js"></script>
+        <!-- <script src="data/navo_sky.js"></script> -->
+        <!-- <script src="data/testForKick.js"></script> -->
+        <!-- <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet"> -->
+        <!-- <script src="http://vjs.zencdn.net/c/video.js"></script> -->
+        <style>
+        .yLegend
+        {
+            fill:black;
+            text-anchor: end;
+            dominant-baseline: middle;
+        }
+        .heading{
+            text-align:left;
+            
+        }
+        .footer{
+            text-align:center;
+            background: #f1eeee;
+            /* padding:0px; */
+            margin:0px;
+
+        }
+        .header{
+            text-align:center;
+            margin-top: 0px;
+            background: #f1eeee;
+            margin-bottom:5px;
+        }
+        .divcenter{
+            text-align:center;
+
+        }
+        .info{
+            font-size: 14px;
+
+        }
+        .boldText{
+            font-weight: bold;
+            /* font-size: 12pt; */
+        }
+        .largeText{
+            font-size:14pt;
+        }
+        .result{
+            font-size:14pt;
+
+        }
+        .highlighted{
+            stroke:  #ffdd08;
+            
+            /* stroke:  black; */
+            stroke-width:2px;
+            /* stroke-opacity:0.3; */
+            
+        }
+        .nothighlighted{
+            stroke: white;
+            stroke-width:0px;
+        }
+        .gameLengthBar{
+            /* fill:"#0074D9"; */
+            /* fill:#329fec; */
+            fill: #9e9ac8;
+            /* fill:black; */
+            fill-opacity:1;
+            stroke:grey;
+            stroke-width:1px;
+            /* stroke-opacity: 0.6; */
+        }
+        
+
+
+        /* .video-js {
+            position: relative !important;
+            width: 100% !important;
+            height: auto !important;
+        } */
+        .footer {
+            position: relative;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 35px;
+            padding-top: 10px;
+            /* color: black;
+            vertical-align: middle;
+            line-height: 5px;
+            font-size: 08pt;
+            border-top: 1px solid #16ad1b;
+            background-color: white; */
+        }
+
+        .footer ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .icon-flipped {
+            transform: scaleX(-1);
+            /* -moz-transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            -ms-transform: scaleX(-1); */
+        }
+        .firstLine{
+            font-size:12pt;
+        }
+        .secondLine{
+            font-size:10pt;
+        }
+        .abbr{
+            font-variant: small-caps;
+        }
+        .linkInTitle
+        {
+            color:black;
+            text-decoration: underline;
+        }
+
+        #playbackDiv.fullscreen{
+            z-index: 9999; 
+            width: 100%; 
+            height: 100%; 
+            position: fixed; 
+            padding-top:80px;
+            top:0;
+            left: 0; 
+            /* background-color:  rgba(201, 76, 76, 0.3); */
+            
+            
+        }
+        .sliderFullScreen{
+            width: 500px;
+            margin: auto;
+        }
+        .bodyFullScreen
+        {
+            opacity: 0.3;
+        }
+       
+        /* .btn{
+            padding: 0px 10px;
+            font-size: 12px;
+            line-height: 1.5;
+            border-radius: 3px;
+        } */
+        </style>
+    <title>Pommerman Visualization</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="css/jquery-ui.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
+  <script src="js/jquery-ui.min.js"></script>
+
+  <style>
+       .btn-default{
+            background-color: #d6d0d0;
+        }
+        .glyphicon-resize-small, .glyphicon-resize-full{
+            background-color: #d6d0d0;
+            padding: 3px;
+        }
+        .ui-widget-content
+        {
+            background: #d6d0d0;
+        }
+        .ui-widget-header
+        {
+            background: #9a0000;
+        }
+        .btn-sm{
+            padding:0px 6px 0px 6px;
+        }
+  </style>
+    </head>
+    <body  >
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+            
+                <!-- Modal content-->
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select a game metric:</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="gameMetricRadio">
+                        <input type="radio" name="gameMetric" value="moved">  # Moves<br/>
+                        <input type="radio" name="gameMetric" value="laidBomb" checked>  # Bombs Laid<br/>
+                        <input type="radio" name="gameMetric" value="kicked">  # Bomb Kicks<br/>
+                        <input type="radio" name="gameMetric" value="pickedPower" >  # Power Ups (any power)<br/>
+                        <input type="radio" name="gameMetric" value="kick" >  # Power-up: Kick<br/>
+                        <input type="radio" name="gameMetric" value="range" >  # Power-up: Increase range of bomb<br/>
+                        <input type="radio" name="gameMetric" value="extra" >  # Power-up: Extra bomb<br/>
+                        <input type="radio" name="gameMetric" value="radio" >  # Radio Messages<br/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="modalOkButton">Ok</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="header">
+            <!-- <span style="font-size:14pt;">Supplementary Material for</span><br /><br /> -->
+           
+            <div class="container-fluid">
+                    <div class="row">
+                            <div class="col-sm-2"  style="margin-top:10pt">
+                            
+                                <!-- <b><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK0PsotG1EUevLEQmakiyb_72PIX19bOHbWykLGLCidwyPog/viewform" target="_blank"  class="secondLine"><span class="glyphicon glyphicon-list-alt"></span> Feedback Form</a></b> -->
+                                   
+                                    
+                            </div>
+                        
+                        <!-- <div class="col-sm-2">
+                                <a href="https://www.uni-due.de/de/datenschutz.php">Data Privacy</a>
+                                
+                        </div> -->
+                        <div class="col-sm-8" >
+                                    <span class="firstLine"><b class="abbr">PomVis:</b> Visualization for Analysis of <a href="https://www.pommerman.com/" class="linkInTitle" target="_blank">Pommerman</a> Games</span><br/>
+                                    <!-- <span class="secondLine">(Please fill <b><a href="https://docs.google.com/forms/d/e/1FAIpQLSdK0PsotG1EUevLEQmakiyb_72PIX19bOHbWykLGLCidwyPog/viewform" target="_blank" >the feedback form</a></b> to help us in research and suggest further improvements.)</span> -->
+                                    <div style="font-size: 10pt;"><span >Agarwal, S., Wallner, G. and Beck, F. (2020), Bombalytics: Visualization of Competition and Collaboration Strategies of Players in a Bomb Laying Game. Computer Graphics Forum, 39: 89-100. <a href="https://s-agarwl.github.io/publication/Agarwal2020Bombalytics">Details</a></span></div>
+
+
+                        </div>
+                        <div class="col-sm-2" style="margin-top:10pt">
+                                <a href="tutorial.html" target="_blank"  class="secondLine"><span class="glyphicon glyphicon-blackboard"></span> Help</a>
+                                <a href="contact.html" target="_blank"  class="secondLine" style="margin-left:15px;"><span class="glyphicon glyphicon-envelope"></span> Contact</a>
+                                
+                                
+                        </div>
+                    </div>
+                </div>
+        </div>
+        
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-10" id="overviewColumnDiv">
+                            <span> Select Competition: </span>
+                            <select id="datasetSelector" onchange="datasetChange()">
+                                    <option value="hako_navo" selected>hakozakijunctions vs. navocado</option>
+                                    <option value="hako_sky">hakozakijunctions vs. skynet955</option>
+                                    <option value="navo_sky">navocado vs. skynet955</option>
+                                    <option value="simple_hako">simpleAgent vs. hakozakijunctions</option>
+                                    <option value="simple_navo">simpleAgent vs. navocado</option>
+                                    <option value="simple_sky">simpleAgent vs. skynet955</option>
+                                  </select> OR 
+                            <!-- <span class="glyphicon glyphicon-folder-open " style="margin-right: 10px;"></span> -->
+                            <input  style = "display:inline-block;font-size:9pt;" type="file" id="filepicker" name="fileList" webkitdirectory multiple directory/>
+                            <!-- <br/>
+                            <span style="font-size:9pt;">(Select the root directory which contains JSON representations of the game, logged via '--record_json_dir' command line option.)</span>
+                            <br/>
+                            <span style="font-size:9pt; font-weight:bold">(Selected files are NOT uploaded on server. They are used only for client-side processing.)</span> -->
+                      
+                            <div id="summaryDiv"></div>
+                    </div>
+                    
+                    <div class="col-sm-2" id="playbackColumnDiv">
+                            <div id="playbackDiv">
+                                    <div id="video" class="divcenter"></div>
+                                    <form id="reservation" >
+                                        
+                                
+                                      </form>
+                                     <div style="margin-top:5px; text-align: center;">
+                                        <!-- <button id="previous" >Previous</button>
+                                        <button id="play">Play</button>
+                                        <button id="pause">Pause</button>
+                                        <button id="next">Next</button> -->
+                                        <!-- <i class="glyphicon glyphicon-backward" id="previous"></i> -->
+                                        <label >Step: </label><label id="frame">1</label>
+                                        
+                                        <!-- <a href="#" class="btn btn-default btn-sm" id="previous" style="padding:0px 10px 0px 10px">
+                                            <span class="glyphicon glyphicon-backward"></span>
+                                        </a> -->
+                                        <a href="#" class="btn btn-default btn-sm icon-flipped" id="previous">
+                                                <span class="glyphicon glyphicon-share-alt"></span>
+                                            </a>
+                                        <a href="#" class="btn btn-default btn-sm" id="play" >
+                                            <span class="glyphicon glyphicon-play"></span>
+                                        </a>
+                                        <a href="#" class="btn btn-default btn-sm" id="pause" >
+                                            <span class="glyphicon glyphicon-pause"></span>
+                                        </a>
+                                        <a href="#" class="btn btn-default btn-sm" id="next" >
+                                            <span class="glyphicon glyphicon-share-alt"></span>
+                                        </a>
+                                        <select id="speed" onchange="speedChange()">
+                                            <option value="400" >0.25x</option>
+                                            <option value="300" >0.5x</option>
+                                            <option value="200" selected>1x</option>
+                                            <option value="100">2x</option>
+                                            
+                                          </select>
+                                        <i class="glyphicon glyphicon-resize-full" id="resize" isFullScreen="false"></i>
+                                        <!-- <i class="glyphicon glyphicon-pause" id="pause"></i>
+                                        <i class="glyphicon glyphicon-forward" id="next"></i> -->
+                                     </div>
+
+                                </div>
+                    </div>
+                </div>
+                    <div class="row " height = "870px">
+                        <div class= "col-sm-12 " id="mainDiv" >
+                                
+                                <!-- <svg id="mainVisualization" viewBox="0 0 1920 1000" > -->
+                                <svg id="mainVisualization" style="margin-right:10px">
+                                    <defs>
+                                            <!-- arrowhead marker definition -->
+                                            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+                                                markerWidth="6" markerHeight="6"
+                                                orient="auto-start-reverse">
+                                                <path d="M 0 0 L 10 5 L 0 10 z" />
+                                            </marker>
+
+                                            <filter x="0" y="0" width="1" height="1" id="solid">
+                                                <feFlood flood-color="white"/>
+                                                <feComposite in="SourceGraphic" operator="xor" operator="xor"/>
+                                              </filter>
+                                    </defs>
+                                    <g id="mainVisualizationGroup"></g>
+                                </svg>
+                        </div>
+                        
+                    </div>
+                    <!-- <div class="row " height = "600px">
+                        <div style="width:33%; display: inline-block; height:100px"></div>
+                        <div class= "divcenter" style="padding:10px; margin-top: 0px; width:33%; display: inline-block">
+                            <div class="divcenter" style="width:100%">Gameplay</div>
+                        </div>
+                    </div> -->
+            </div>
+        <div >
+            
+        </div>
+
+        <div class="footer" style="float:left;">
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-2">
+                                <a href="https://www.uni-due.de/de/impressum.shtml" target="_blank" class="secondLine">Imprint</a>
+                                <a href="https://www.uni-due.de/de/datenschutz.php" target="_blank" style="margin-left:16px;" class="secondLine">Data Privacy</a>
+                                
+                        </div>
+                        <!-- <div class="col-sm-2">
+                                <a href="https://www.uni-due.de/de/datenschutz.php">Data Privacy</a>
+                                
+                        </div> -->
+                        <div class="col-sm-8" >
+                                Best viewed in Google Chrome at 1920 x 1200 resolution
+                        </div>
+                    </div>
+                </div>
+    
+        </div>
+    </body>
+    <script>
+        // window.figureForTeaser = true;
+        window.figureForTeaser = false;
+        window.highlightEvents = {"moved": true, "laidBomb": false, "kicked": true, "pickedPower": true, "death": true, "allBombs":true};
+
+        window.maxGameLength = 802;
+        window.timeWait = 200;
+        window.metric_labelDictionary = {
+            "moved": "# Moves",
+            "laidBomb": "# Bombs Laid",
+            "kicked": "# Bomb Kicks",
+            "pickedPower": "# Power Ups",
+            "death": "# Deaths",
+            "kick": "# Power-up: Kick",
+            "range": "# Power-up: Range",
+            "extra": "# Power-up: Extra Bomb",
+            "radio": "# Radio Messages"
+        }
+        window.selectedMetric = "laidBomb";
+
+        window.agentIndex_RowidDictionary = {
+                0: "e1",
+                1: "e3",
+                2: "e2",
+                3: "e4"
+            };
+        window.Rowid_agentIndexDictionary = {
+                "e1": 0,
+                "e3": 1,
+            "e2" : 2,
+            "e4":3
+            };
+
+        window._leftTextEnd = 200;
+        // Check for the various File API support.
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+        // Great success! All the File APIs are supported.
+        } else {
+        alert('The File APIs are not fully supported in this browser.');
+        }
+
+        d3.select("#resize").on("click", function(){
+            var isFullScreen = d3.select("#resize").attr("isfullscreen");
+            var isplaying = window.playClicked;
+
+            if(window.playClicked == true)
+            {
+                clearInterval(window.intervalId);
+                d3.select("#status").interrupt();
+                window.playClicked = false;
+                
+            }
+            $('#playbackDiv').toggleClass('fullscreen');
+            $('#slider').toggleClass('sliderFullScreen');
+            $('#overviewColumnDiv').toggleClass('bodyFullScreen');
+            $('#mainDiv').toggleClass('bodyFullScreen');
+
+            if(isFullScreen == "false")
+            {
+               
+                window.svgWidthHeight = 500;
+                isFullScreen = "true";
+                d3.select("#resize").attr("class", "glyphicon glyphicon-resize-small");
+                d3.select("#playbackDiv").attr("opacity",1);
+                
+            }
+            else
+            {
+                isFullScreen = "false";
+                window.svgWidthHeight = 200;
+                d3.select("#resize").attr("class", "glyphicon glyphicon-resize-full");
+
+            }
+            d3.select("#resize").attr("isfullscreen", isFullScreen);
+            d3.select("#videoSVG").attr("width", window.svgWidthHeight).attr("height", window.svgWidthHeight);
+
+
+            i = $( "#slider" ).slider("value");
+            var video = d3.select("#videoSVG");
+            renderFrame(window.pommermanData["blob"]["state"], i, video);
+
+            if(isplaying)
+            {
+                
+                window.intervalId = setInterval(function()
+                    {
+                        renderNextFrame(window.pommermanData["blob"]["state"], i, video);
+                        i++; 
+                    }, window.timeWait);
+
+                    var sbar = d3.select("#status");
+                    var t = d3.select('#status').node().transform.baseVal[0].matrix;
+                    var currentX = t["e"];
+                    var totalDuration = window.pommermanData["blob"]["state"].length * window.timeWait;
+                    var visEndX = globalXScale(window.pommermanData["blob"]["state"].length) ;
+                    var visStartX = globalXScale(0);
+                    var alpha = ((visEndX - visStartX)/totalDuration);
+                    var dur = (currentX - visStartX)/alpha;
+                    d3.select("#status").attr("transform","translate("+currentX+",0)" )
+                    .transition().duration((totalDuration - dur))
+                    .ease(d3.easeLinear)
+                    .attr("transform","translate("+(visEndX)+",0)" );
+                    window.playClicked = true;
+            }
+
+        });
+        function speedChange()
+        {
+            var e = document.getElementById("speed");
+            window.timeWait = parseInt(e.options[e.selectedIndex].value);
+            var isplaying = window.playClicked;
+
+            if(window.playClicked == true)
+            {
+                clearInterval(window.intervalId);
+                d3.select("#status").interrupt();
+                window.playClicked = false;
+                
+            }
+            if(isplaying)
+            {
+                i = $( "#slider" ).slider("value");
+                var video = d3.select("#videoSVG");
+                window.intervalId = setInterval(function()
+                    {
+                        renderNextFrame(window.pommermanData["blob"]["state"], i, video);
+                        i++; 
+                    }, window.timeWait);
+
+                    var sbar = d3.select("#status");
+                    var t = d3.select('#status').node().transform.baseVal[0].matrix;
+                    var currentX = t["e"];
+                    var totalDuration = window.pommermanData["blob"]["state"].length * window.timeWait;
+                    var visEndX = globalXScale(window.pommermanData["blob"]["state"].length) ;
+                    var visStartX = globalXScale(0);
+                    var alpha = ((visEndX - visStartX)/totalDuration);
+                    var dur = (currentX - visStartX)/alpha;
+                    d3.select("#status").attr("transform","translate("+currentX+",0)" )
+                    .transition().duration((totalDuration - dur))
+                    .ease(d3.easeLinear)
+                    .attr("transform","translate("+(visEndX)+",0)" );
+                    window.playClicked = true;
+            }
+
+
+
+        }
+        function datasetChange()
+        {
+            var e = document.getElementById("datasetSelector");
+            var fileName = e.options[e.selectedIndex].value;
+            $("body").css("cursor", "progress");
+
+            // loadjscssfile("data/"+fileName+".js", "js");
+            // setTimeout(function(){ 
+            //     drawOverallStatistics();
+            //     loadGame(0);
+            //     $("body").css("cursor", "default");
+            // }, 4000);
+
+            require("data/"+fileName+".js", function(){
+                drawOverallStatistics();
+                loadGame(0);
+                $("body").css("cursor", "default");
+            });
+
+            function require(url, callback) 
+            {
+            var e = document.createElement("script");
+            e.src = url;
+            e.type="text/javascript";
+            e.addEventListener('load', callback);
+            document.getElementsByTagName("head")[0].appendChild(e);
+            }
+            
+        }
+
+        function loadjscssfile(filename, filetype){
+            if (filetype=="js"){ //if filename is a external JavaScript file
+                var fileref=document.createElement('script')
+                fileref.setAttribute("type","text/javascript")
+                fileref.setAttribute("src", filename)
+            }
+            else if (filetype=="css"){ //if filename is an external CSS file
+                var fileref=document.createElement("link")
+                fileref.setAttribute("rel", "stylesheet")
+                fileref.setAttribute("type", "text/css")
+                fileref.setAttribute("href", filename)
+            }
+            if (typeof fileref!="undefined")
+                document.getElementsByTagName("head")[0].appendChild(fileref)
+        }
+        window.fileNamesArray=[];
+        document.getElementById("filepicker").addEventListener("change", function(event) {
+            window.fileNamesArray=[];
+            let output = document.getElementById("listing");
+            let files = event.target.files;
+            window.gamesDataArray = [];
+            window.agentsArray=[[],[],[],[]];
+            files = Array.from(files).sort(function(a,b){
+                var t1 = a.webkitRelativePath;
+                var t2 = b.webkitRelativePath;
+
+                var  firstt1 = t1.indexOf("/");
+                var num1 = parseInt(t1.substring(firstt1+1, t1.indexOf("/", firstt1+1)));
+
+                var  firstt2 = t2.indexOf("/");
+                var num2 = parseInt(t2.substring(firstt2+1, t2.indexOf("/", firstt2+1)));
+                return num1-num2;
+            });
+
+            readmultifiles(files);
+
+            function readmultifiles(files) {
+                // Read first file
+                setup_reader(files, 0);
+            }
+
+            // Don't define functions in functions in functions, when possible.
+
+            function setup_reader(files, i) {
+                var file = files[i];
+                window.fileNamesArray.push(file.webkitRelativePath);
+                var name = file.name;
+                var reader = new FileReader();
+                reader.onload = function(e){
+                                    readerLoaded(e, files, i, name);
+                                };
+                reader.readAsText(file);
+                // After reading, read the next file.
+            }
+            window.orderOfAgents = -1;
+
+            function readerLoaded(e, files, i, filename) {
+                
+                //TODO: better logic for checking file type
+                // if(filename=="game_state.json")
+                
+                if(filename.includes(".json")) 
+                {
+                    // console.log(filename);
+                    var temp = e.target.result;
+                    var isAgentOrderIncorrect = false;
+                    // temp = temp.replace('\"[', '[');
+                    // temp = temp.replace(']\"', ']');
+                    temp = JSON.parse(temp);
+                    
+                    if(window.orderOfAgents == -1)
+                        window.orderOfAgents = Array.from(temp["agents"]);
+                    else
+                    {
+                        if(window.orderOfAgents[0]==temp["agents"][0] && window.orderOfAgents[1]==temp["agents"][1] && window.orderOfAgents[2]==temp["agents"][2] && window.orderOfAgents[3]==temp["agents"][3] )
+                        {
+                            isAgentOrderIncorrect = false;
+                        }
+                        else if (window.orderOfAgents[0]==temp["agents"][1] && window.orderOfAgents[2]==temp["agents"][3] )
+                        {
+                            isAgentOrderIncorrect = true;
+                        }
+                        else
+                        {
+                            alert("Uploaded games have information of more than 2 teams.");
+                        }
+                    }
+                    if(isAgentOrderIncorrect)
+                    {
+                        temp["agents"] = makeAgentOrderCorrectInArray(temp["agents"]);
+                        if("winners" in temp)
+                        {
+                            temp["winners"] = changeAgentIndices(temp["winners"]);
+                        }
+                        if("result" in temp)
+                        {
+                            if("winners" in temp["result"])
+                            {
+                                temp["result"]["winners"] = changeAgentIndices(temp["result"]["winners"]);
+                            }
+                        }
+
+                    }
+
+                    for(var k=0; k<temp["state"].length; k++)
+                    {
+                        for(var field in temp["state"][k])
+                        {
+                            var fieldsArray = ["agents", "board", "bombs","flames", "intended_actions", "items", "_radio_from_agent"];
+                            if(fieldsArray.indexOf(field)>=0 )
+                            {
+                                var tempString = temp["state"][k][field].replace('\"[', '[');
+                                tempString = tempString.replace(']\"', ']');
+                                temp["state"][k][field] = JSON.parse(tempString);
+
+                                if(isAgentOrderIncorrect)
+                                {
+                                    if(field =="agents")
+                                    {
+                                        temp["state"][k]["agents"] = makeAgentOrderCorrectInArray(temp["state"][k]["agents"]);
+                                        // console.log("hii");
+                                    }
+                                    else if(field == "intended_actions")
+                                    {
+                                        temp["state"][k]["intended_actions"] = makeAgentOrderCorrectInArray(temp["state"][k]["intended_actions"]);
+
+                                    }
+                                    else if(field == "bombs")
+                                    {
+                                        for(var e=0; e<temp["state"][k]["bombs"].length; e++)
+                                        {
+                                            temp["state"][k]["bombs"][e]["bomber_id"] = changeMappingOfAgentIndex(temp["state"][k]["bombs"][e]["bomber_id"]);
+                                        }
+
+                                    }
+                                    else if(field == "board")
+                                    {
+                                        var agentBoardNumbers = [10,11,12,13];
+
+                                        for(var e=0; e<temp["state"][k]["board"].length; e++)
+                                        {
+                                            for(var f=0; f<temp["state"][k]["board"][e].length; f++)
+                                            {
+                                                if(agentBoardNumbers.indexOf(temp["state"][k]["board"][e][f]) >=0)
+                                                {
+                                                    temp["state"][k]["board"][e][f] = changeMappingOfAgentBoardNumber(temp["state"][k]["board"][e][f]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else if(field == "_radio_from_agent")
+                                    {
+                                        if("_radio_from_agent" in temp["state"][k])
+                                        {
+                                            temp["state"][k]["_radio_from_agent"] = makeAgentOrderCorrectInArray(temp["state"][k]["_radio_from_agent"]);
+                                            for(var z=0; z<temp["state"][k]["_radio_from_agent"].length; z++)
+                                                temp["state"][k]["_radio_from_agent"][z][0] = changeMappingOfAgentBoardNumber(temp["state"][k]["_radio_from_agent"][z][0]);
+                                        }
+                                    }
+                                }
+
+
+                            }
+                        }
+                        
+                    //     // console.log(temp["state"][i]["agents"]);
+                    }
+                    var gameDict = {"result": "", "agents":[0,0,0,0]};
+                    var currentGame = temp;
+
+                    if( isTeamCompetition(currentGame.config))
+                    {
+                            if(currentGame["result"]["name"] == "Tie")
+                            {
+                                gameResultString = "Tie";
+                                for(var j=0; j<4; j++)
+                                {
+                                    window.agentsArray[j].push(0);
+                                }
+                            }
+                            else
+                            {
+                                var agentIndex1 = -1;
+                                var agentIndex2 = -1;
+                                if("winners" in currentGame["result"])
+                                {
+                                    agentIndex1 = currentGame["result"]["winners"][0];
+                                    agentIndex2 = currentGame["result"]["winners"][1];
+                                }
+                                else if("winners" in currentGame)
+                                {
+                                    agentIndex1 = currentGame["winners"][0];
+                                    agentIndex2 = currentGame["winners"][1];
+                                }
+
+                                gameResultString = "Win";
+                                gameDict["agents"][agentIndex1] = 1;
+                                gameDict["agents"][agentIndex2] = 1;
+
+                                window.agentsArray[agentIndex1].push(1);
+                                window.agentsArray[agentIndex2].push(1);
+                                for(var j=0; j<4; j++)
+                                {
+                                    if(j!= agentIndex1 && j!= agentIndex2)
+                                        window.agentsArray[j].push(-1);
+                                }
+
+                            }
+                    }
+                    else
+                    {
+                        if(currentGame["result"]["name"] == "Tie")
+                        {
+                            gameResultString = "Tie";
+                            for(var j=0; j<4; j++)
+                            {
+                                window.agentsArray[j].push(0);
+                            }
+                        }
+                        else
+                        {
+                            var agentIndex1 = -1;
+                            if("winners" in currentGame["result"])
+                            {
+                                agentIndex1 = currentGame["result"]["winners"][0];
+                                gameResultString = "Win";
+                            }
+                            else
+                            {
+                                agentIndex1 = currentGame["winners"][0];
+                                gameResultString = "Win";
+                            }
+                            gameDict["agents"][agentIndex1] = 1;
+                            window.agentsArray[agentIndex1].push(1);
+                            for(var j=0; j<4; j++)
+                            {
+                                if(j!= agentIndex1 )
+                                    window.agentsArray[j].push(-1);
+                            }
+                        }
+
+                    }
+                    gameDict["result"] = gameResultString;
+
+                    
+                    
+                    // temp["output"] = gameDict;
+                    window.gamesDataArray.push(temp);
+
+                    // if(index == (files.length))
+                    // {
+                    //     drawOverallStatistics();
+                    // }
+
+                }
+
+                // If there's a file left to load
+                if (i < files.length - 1) {
+                    // Load the next file
+                    setup_reader(files, i+1);
+                }
+                else
+                {
+                    drawOverallStatistics();
+                    
+                    loadGame(0);
+
+
+                }
+            }
+
+
+        }, false);
+        function drawOverviewMetric(svg, xscale2, yscale2, overviewStatsPerGame, isTeamGame, metricName, heightOfCell)
+            {
+                d3.select("#metricGroup").selectAll("*").remove();
+                var metricGroup =  d3.select("#metricGroup");
+
+                window.selectedMetric = metricName;
+                d3.selectAll(".selectedMetric").text(window.metric_labelDictionary[window.selectedMetric]);
+
+                var dataArray=[];
+                var min = 99999999, max = -1;
+                for(var i=0; i< overviewStatsPerGame.length; i++)
+                {
+                    var temp = [];
+                   
+                    
+                    if(isTeam)
+                    {
+                        temp.push(overviewStatsPerGame[i]["e1"][metricName] + overviewStatsPerGame[i]["e2"][metricName]);
+                        temp.push(overviewStatsPerGame[i]["e3"][metricName] + overviewStatsPerGame[i]["e4"][metricName]);
+                    }
+                    else
+                    {
+                        temp.push(overviewStatsPerGame[i]["e1"][metricName]);
+                        temp.push(overviewStatsPerGame[i]["e2"][metricName]);
+                        temp.push(overviewStatsPerGame[i]["e3"][metricName]);
+                        temp.push(overviewStatsPerGame[i]["e4"][metricName]);
+                    }
+                    var tempMin = d3.min(temp);
+                    var tempMax = d3.max(temp);
+
+                    if(tempMin < min) min = tempMin;
+                    if(tempMax > max) max = tempMax;
+                    dataArray.push(temp);
+                }
+            
+                var barHeightScale = d3.scaleLinear().domain([0, max]).range([0, heightOfCell - 4]);
+                for(var i=0; i< dataArray.length; i++)
+                {
+                    var svgGroup = metricGroup.append("g").attrs({
+                        "gameIndex": i,
+                        "cursor": "pointer"
+                    });
+
+                    for(var j=0; j< dataArray[i].length; j++)
+                    {
+                        var reductionInBarWidth = 5;
+
+                         // border of bars
+                         svgGroup.append("rect").attrs({
+                            "x": xscale2(i) + reductionInBarWidth,
+                            "y": yscale2(j+"-"),
+                            "height":heightOfCell,
+                            "width": heightOfCell - 2*reductionInBarWidth,
+                            "fill": "white",
+                            "stroke": "black",
+                            "stroke-width":"1px"
+                        });
+                        
+                        svgGroup.append("rect").attrs({
+                            "x": xscale2(i) + reductionInBarWidth + 1,
+                            "y": yscale2(j+"-") + heightOfCell - barHeightScale(dataArray[i][j]) - 1,
+                            "width":heightOfCell - 2*reductionInBarWidth - 2,
+                            "height": barHeightScale(dataArray[i][j]),
+                            "fill": "grey",
+                            "stroke": "grey"
+                        }).append("title").text(dataArray[i][j]);
+                        // metricGroup.append("rect").attrs({
+                        //     "x": xscale2(i) + 1,
+                        //     "y": yscale2(j+"-"),
+                        //     "height":heightOfCell,
+                        //     "width": barHeightScale(dataArray[i][j]) - 2,
+                        //     "fill": "grey"
+                        // });
+
+                       
+                        svgGroup.on("click", function(){
+                            var gameIndex = d3.select(this).attr("gameIndex");
+                            loadGame(gameIndex);
+                        })
+                        svgGroup.on("mousemove", function(){
+                            var gameIndex = d3.select(this).attr("gameIndex");
+                            d3.select("#highlightRectid"+gameIndex).classed("highlighted", true).classed("nothighlighted", false);
+                        });
+                        svgGroup.on("mouseout", function(){
+                            var gameIndex = d3.select(this).attr("gameIndex");
+                            if(d3.select("#highlightRectid"+gameIndex).attr("selected") == "false")
+                                d3.select("#highlightRectid"+gameIndex).classed("highlighted", false).classed("nothighlighted", true);
+                        });
+                    }
+                }
+            }
+
+
+        function drawOverallStatistics()
+        {
+
+
+            // calculate and draw summary visualizations
+            d3.select("#summaryDiv").selectAll("*").remove();
+
+            var overviewStatsPerGame = computeStatsForOverview();  
+
+            
+
+            // console.log(window.gamesDataArray);
+            // console.log(window.agentsArray);
+
+            // var leftPadding = window._leftTextEnd,
+            var leftPadding = 180,
+                rightPadding = 80,
+                topPadding = 10,
+                bottomPadding = 0,
+                height = 210,
+                width = 1600;
+
+            var svg = d3.select("#summaryDiv").append("svg").attrs({
+                width: width,
+                height: height,
+                "id": "overviewSVG"
+            })
+            //Win, Lose, Tie
+            var resultColors = ["#31a354", "#e41a1c", "black"];
+            var widthOfGameLengthBars = 4;
+            var temparray=[];
+            window.namesArray = [];
+            for(var j=0; j<window.gamesDataArray.length; j++)temparray.push(j);
+
+            var xscale2 = d3.scaleBand()
+                    .domain(temparray).rangeRound([leftPadding, width-rightPadding])
+                    .paddingInner(0.3)
+                    .paddingOuter(0.1);
+
+            var widthOfCell = 0;
+            var heightOfCell = 0;
+            if(window.gamesDataArray.length==1)
+            {
+                widthOfCell = 20;
+                heightOfCell = 20;
+            }
+            else
+            {
+                if(xscale2.bandwidth() <=18)
+                {
+                    widthOfCell = xscale2.bandwidth();
+                    heightOfCell  = widthOfCell;
+                }
+                else
+                {
+                    widthOfCell = 18;
+                    heightOfCell = 18;
+                }
+            }
+
+            window.widthOfCell = widthOfCell;
+            // var xscale = d3.scaleLinear().domain([0, window.gamesDataArray.length]).range([window._leftTextEnd, width-rightPadding]);
+            var tempArray = [];
+            var agentIndices = [];
+            var isTeam = false;
+            if(isTeamCompetition(window._dataForVisualization.gameName))
+            {
+                tempArray.push(window.agentsArray[0]);
+                tempArray.push(window.agentsArray[1]);
+                agentIndices = [0,1];
+                namesArray.push("Team 1");
+                namesArray.push("Team 2");
+                isTeam = true;
+
+            }
+            else{
+                isTeam =false;
+                tempArray = window.agentsArray;
+                agentIndices = [0,1,2,3];
+                for(var i=0; i<window.pommermanData["blob"]["agents"].length; i++)
+                {
+                    namesArray.push(agentNameSimplify(window.pommermanData["blob"]["agents"][i]));
+                }
+            }
+
+            
+
+            
+            var winArray = [];
+            var loseArray = [];
+            var numTies = 0;
+            for(var i=0; i<namesArray.length; i++)
+            {
+                winArray.push(0);
+                loseArray.push(0);
+            }
+            
+            var tempYPosArray=[];
+            
+            // var everyRowHeightExceptBombsRow = (height-bottomPadding - topPadding)/ (agentIndices.length);
+            var everyRowHeightExceptBombsRow = heightOfCell;
+            var tempY = topPadding;
+            for(var x=0; x<tempArray.length; x++)
+            {
+                tempYPosArray.push(tempY);
+                tempY += heightOfCell;
+            }
+            var newAgentIndices = [];
+            for(var z=0; z<agentIndices.length; z++)
+            {   
+                newAgentIndices.push(agentIndices[z]);
+                newAgentIndices.push(agentIndices[z]+"-");
+            }
+            // var yscale = d3.scaleOrdinal().domain().range(tempYPosArray);
+            var yscaleInnerPadding = 0.3, yscaleOuterPadding = 0.1;
+            // var maxYpos = 2*tempArray.length*(heightOfCell + 5);
+            var maxYpos = 2*tempArray.length*(heightOfCell + 5);
+            var yLocOfGameLengthBarBottom = maxYpos + heightOfCell;
+            var yscale2 = d3.scaleBand()
+                    .domain(newAgentIndices)
+                    // .rangeRound([topPadding, height-bottomPadding])
+                    .rangeRound([topPadding, maxYpos])
+                    .paddingInner(yscaleInnerPadding)
+                    .paddingOuter(yscaleOuterPadding);
+
+            var gameLengthBarHeightScale = d3.scaleLinear().domain([0,window.maxGameLength]).range([0, (yLocOfGameLengthBarBottom - topPadding )]);
+            var flagMetricDropdownDrawn =false;
+            var members = [];
+            var config = {};
+            
+
+            for(var i=0; i<newAgentIndices.length; i++)
+            {
+                if(Number.isInteger(newAgentIndices[i]))
+                {
+                    var maxCharacters = 22;
+                    var fullName = "";
+                    var shortName = "";
+                    if(namesArray[i/2] == "Team 1")
+                    {
+                        
+                        fullName = "A: "+agentNameSimplify(window.gamesDataArray[0]["agents"][0]);
+                    }
+                    else if(namesArray[i/2] == "Team 2")
+                    {
+                        fullName = "B: "+agentNameSimplify(window.gamesDataArray[0]["agents"][1]); 
+                    }
+                    if(fullName.length > maxCharacters)
+                    {
+                        shortName = fullName.substring(0, maxCharacters-3)+"...";
+                    }
+                    else
+                    {
+                        shortName = fullName;
+                    }
+
+                    svg.append("text").text(shortName+":").attrs({
+                        "x": leftPadding -15,
+                        "y": yscale2(newAgentIndices[i]) + heightOfCell/2,
+                        // "font-size":"12px",
+                        "class": "info",
+                        "font-weight":"bold",
+                        "text-anchor":"end",
+                        "dominant-baseline":"hanging"
+                        }).append("title").text(fullName);
+                }
+                else
+                {
+                    // data-toggle="modal" data-target="#myModal"
+                        var gameMetricGroup = svg.append("g").attrs({
+                            "data-toggle": "modal",
+                            "data-target": "#myModal"
+                        });
+                        var gameMetricText = gameMetricGroup.append("text").text(window.metric_labelDictionary[window.selectedMetric]).attrs({
+                            "x": xscale2(0) -25 ,
+                            "y": yscale2(newAgentIndices[i]) + heightOfCell/2,
+                            
+                            "text-anchor":"end",
+                            "dominant-baseline":"central",
+                            "class":"info selectedMetric",
+                            "text-decoration": "underline",
+                            "cursor":"pointer"
+                        });
+                        
+                        // var backRect = gameMetricText.node().getBBox();
+
+                        gameMetricGroup.append("text").text("\ue019").attrs({
+                            "x": xscale2(0) -22,
+                            "y": yscale2(newAgentIndices[i]) + heightOfCell/2,
+                            
+                            "text-anchor":"start",
+                            "dominant-baseline":"central",
+                            "class":"glyphicon",
+                            // "text-decoration": "underline",
+                            "fill": "black",
+                            "cursor":"pointer"
+                        });
+
+                        // gameMetricGroup.on("click", function(){
+
+                        // });
+                        
+                        if(i<newAgentIndices.length -1)
+                        {
+                            svg.append("line")
+                            .attrs({
+                                "x1": xscale2(0),
+                                "y1": yscale2(0) + 2*i*(heightOfCell + 5),
+                                "x2": width - rightPadding,
+                                "y2": yscale2(0) + 2*i*(heightOfCell + 5),
+                                "stroke":"grey",
+                                "opacity": 0.5,
+                                "stroke-width":"1px"
+                            });
+                        }
+
+                }
+                
+            }
+            
+            
+            
+
+            
+            
+
+         
+
+            svg.append("path").attrs({
+                // "marker-end": 'url(#head)',
+                "stroke-width": "1px",
+                "fill":"black",
+                "stroke":"black",
+                "d": function(){
+                    var halfWidth = 100;
+                    var centreX = (width-leftPadding)/2 + leftPadding;
+                    var yloc = topPadding +  2*namesArray.length*widthOfCell + 2*widthOfCell + 18;
+                    var st = "M "+(centreX - halfWidth)+", "+(yloc)+" H "+(centreX + halfWidth) + " l 0 -3 l 3 3 l -3 3 l 0 -3";
+                    return st;
+                }
+            });
+            window.overviewMiddleXPos = (width-leftPadding)/2 + leftPadding;
+            var textElm = svg.append("text").text("Games Played").attrs({
+                "x": (width-leftPadding)/2 + leftPadding,
+                "y":topPadding +  2*namesArray.length*widthOfCell + widthOfCell*2 + 18,
+                "class": "info",
+                "dominant-baseline":"central",
+                "text-anchor":"middle",
+                "visibility":"hidden",
+                // "filter": "url(#solid)",
+                "id": "gamesPlayedLegend"
+            });
+
+            var backRect = textElm.node().getBBox();
+            svg.append("rect").attrs({
+                "x": backRect.x,
+                "y": backRect.y,
+                "width": backRect.width,
+                "height": backRect.height,
+                "fill": "white"
+            });
+            svg.append("text").text("Games Played").attrs({
+                "x": (width-leftPadding)/2 + leftPadding,
+                "y":topPadding +  2*namesArray.length*widthOfCell + widthOfCell*2 + 18,
+                "class": "info",
+                "dominant-baseline":"central",
+                "text-anchor":"middle",
+                "id": "gamesPlayedLegend"
+            });
+
+            for(var j=0; j< window.gamesDataArray.length; j++)
+            {
+                for(var i=0; i<tempArray.length; i++)
+                {
+                    if(tempArray[i][j] == 1)
+                    {
+                        winArray[i]++;
+                        
+                    }
+                    else if(tempArray[i][j] == -1)
+                    {
+                        loseArray[i]++
+                    }
+                    else if (tempArray[i][j] == 0)
+                        numTies++;
+                }
+            }
+
+            
+
+            for(var k=0; k<window.gamesDataArray.length; k++)
+            {
+                svg.append("text").text(k+1).attrs({
+                    "x": xscale2(k) + widthOfCell/2 + 1 ,
+                    "y": topPadding +  yscale2(newAgentIndices[newAgentIndices.length-1]) + (heightOfCell)+12,
+                    // "y": topPadding,
+                    "font-size":"10px",
+                    "dominant-baseline":"hanging",
+                    "text-anchor":"middle"
+
+                });
+
+                // Game length bars
+                svg.append("rect").attrs({
+                    "x": xscale2(k)+widthOfCell ,
+                    "y": yLocOfGameLengthBarBottom - gameLengthBarHeightScale(window.gamesDataArray[k]["state"].length),
+                    "width":widthOfGameLengthBars,
+                    "height": gameLengthBarHeightScale(window.gamesDataArray[k]["state"].length),
+                    // "fill": "#38a2f0"
+                    "class": "gameLengthBar"
+                }).append("title").text(window.gamesDataArray[k]["state"].length);
+            }
+
+            // svg.append("text").text("Game #:").attrs({
+            //         "x": leftPadding ,
+            //         "y": yLocOfGameLengthBarBottom,
+            //         // "y": topPadding,
+            //         "font-size":"12px",
+            //         "dominant-baseline":"ideographic",
+            //         "text-anchor":"end"
+
+            //     });
+            svg.append("line")
+            .attrs({
+                "x1": xscale2(0),
+                "y1": yLocOfGameLengthBarBottom,
+                "x2": width - rightPadding - 10,
+                "y2": yLocOfGameLengthBarBottom,
+                "stroke":"black",
+                "opacity": 1,
+                "stroke-width":"1px"
+            });
+
+            window.endOfRows = maxYpos;
+
+
+            for(var i=0; i< window.gamesDataArray.length; i++)
+            {
+                var column = svg.append("g").attrs({
+                    "gameIndex": i,
+                    "pointer-events":"visible",
+                    "cursor":"pointer"
+                });
+
+                if(i%2==0)
+                {
+                    var shadedBackground = column.append("rect").attrs({
+                        "x":  xscale2(i),
+                        "y":  yscale2(0)-5,
+                        "width":  widthOfCell + widthOfGameLengthBars + 4,
+                        // "height":  (tempYPosArray[tempYPosArray.length-1] + heightOfCell) - tempYPosArray[0],
+                        "height": yLocOfGameLengthBarBottom - yscale2(0) +5,
+                        "gameIndex": i,
+                        "fill":"lightgrey",
+                        "opacity":0.2
+                        // "pointer-events":"visible",
+                        // "cursor":"pointer"
+                    })
+                }
+                
+
+                for(var j=0; j<tempArray.length; j++)
+                {
+                    // if(tempArray[j][i] == 0 && (j == (tempArray.length-1)) ) 
+                    // {
+                    //     var cell = column.append("rect").attrs({
+                    //         "x":xscale2(i),
+                    //         "y":yscale2(0) + (heightOfCell - widthOfCell)/2,
+                    //         "width":widthOfCell,
+                    //         // "height": heightOfCell,
+                    //         "height": yscale2(agentIndices[agentIndices.length-1]) + (heightOfCell) - yscale2(0) ,
+                    //         "gameIndex": i,
+                    //         "fill": function(){
+                    //             if(tempArray[j][i] == 1)
+                    //                 return resultColors[0];
+                    //             else if(tempArray[j][i] == -1)
+                    //                 return resultColors[1];
+                    //             else if(tempArray[j][i] == 0)
+                    //                 return resultColors[2];
+                    //         },
+                    //         "fill-opacity": function(){
+                    //             return 0.5;
+                    //             // if(tempArray[j][i] == 1)
+                    //             //     return 1;
+                    //             // else if(tempArray[j][i] == -1)
+                    //             //     return 0.5;
+                    //             // else if(tempArray[j][i] == 0)
+                    //             //     return 1;
+                    //         }
+                    //     });
+                    //     cell.append("title").text("Tie");
+                    // }
+                    // else if(tempArray[j][i] != 0)
+                    {
+                        // Previous solution with filled squares
+                        // var cell = column.append("rect").attrs({
+                        //     "x":xscale2(i),
+                        //     "y":yscale2(j) + (heightOfCell - widthOfCell)/2,
+                        //     "width":widthOfCell,
+                        //     // "height": heightOfCell,
+                        //     "height": heightOfCell -2,
+                        //     "gameIndex": i,
+                        //     "fill": function(){
+                        //         if(tempArray[j][i] == 1)
+                        //             return resultColors[0];
+                        //         else if(tempArray[j][i] == -1)
+                        //             return resultColors[1];
+                        //         else if(tempArray[j][i] == 0)
+                        //             return resultColors[2];
+                        //     },
+                        //     "fill-opacity": function(){
+                        //         return 0.5;
+                        //     }
+                        // });
+                        var radius = widthOfCell/2 - 2;
+                        // var cell = column.append("circle").attrs({
+                        //     "cx":xscale2(i) + xscale2.bandwidth()/2,
+                        //     "cy":yscale2(j) + (heightOfCell - widthOfCell)/2 + widthOfCell/2 + radius/2 ,
+                        //     "r":radius,
+                        //     // "height": heightOfCell,
+                           
+                        //     "gameIndex": i,
+                        //     "stroke": function(){
+                        //         if(tempArray[j][i] == 1)
+                        //             return resultColors[0];
+                        //         else if(tempArray[j][i] == -1)
+                        //             return resultColors[1];
+                        //         else if(tempArray[j][i] == 0)
+                        //             return "grey";
+                        //     },
+                        //     // "stroke-opacity": 1,
+                        //     "stroke-opacity": 0,
+                        //     "stroke-width":"3px",
+                        //     "fill":  function(){
+                        //         if(tempArray[j][i] == 1)
+                        //             return "white";
+                        //         else if(tempArray[j][i] == -1)
+                        //             return "white";
+                        //         else if(tempArray[j][i] == 0)
+                        //             return resultColors[2];
+                        //     },
+                        // });
+                        column.append("text").text(function(){
+                                // if(tempArray[j][i] == 1)
+                                //     return "+";
+                                // else if(tempArray[j][i] == -1)
+                                //     return "-";
+                                // else if(tempArray[j][i] == 0)
+                                //     return "=";
+                                
+                                if(tempArray[j][i] == 1)
+                                    return "\ue013";
+                                    // return "\ue034";
+                                else if(tempArray[j][i] == -1)
+                                    return "\ue014";
+                                else if(tempArray[j][i] == 0)
+                                    return "\ue030";
+                                    // return "";
+
+                                // if(tempArray[j][i] == 1)
+                                //     return "W";
+                                // else if(tempArray[j][i] == -1)
+                                //     return "L";
+                                // else if(tempArray[j][i] == 0)
+                                //     return "T";
+                        }).attrs({
+                            "x":xscale2(i) + widthOfCell/2,
+                            "y":function(){
+                                var yPos = yscale2(j) + (heightOfCell - widthOfCell)/2 + widthOfCell/2;
+                                // if(tempArray[j][i] == -1)
+                                //    yPos -= 1;
+                                return yPos;
+                                
+                            },
+                            "opacity": function(){
+
+                                if(tempArray[j][i] == -1)
+                                    return 0.5;
+                                else 
+                                    return 1;
+                            },
+                            "dominant-baseline": "hanging",
+                            "text-anchor": "middle",
+                            "font-weight": "bold",
+                            "fill":  function(){
+                                if(tempArray[j][i] == 1)
+                                    return resultColors[0];
+                                else if(tempArray[j][i] == -1)
+                                    return resultColors[1];
+                                else if(tempArray[j][i] == 0)
+                                    return resultColors[2];
+                            },
+                            "font-size": function(){
+                            if(tempArray[j][i] == 1)
+                                    return 2*radius *0.8;
+                                else if(tempArray[j][i] == -1)
+                                    return 2*radius *0.5;
+                                else if(tempArray[j][i] == 0)
+                                    return 2*radius *0.8;
+                        }, 
+                            "class":"glyphicon"
+                        }).append("title").text(function(){
+                            if(tempArray[j][i] == 1)
+                                    return "Win";
+                                else if(tempArray[j][i] == -1)
+                                    return "Lose";
+                                else if(tempArray[j][i] == 0)
+                                    return "Tie";
+                        });
+                    }
+                    var columnBackGroundRect = column.append("rect").attrs({
+                        "x":  xscale2(i),
+                        "y":  yscale2(0) - 2,
+                        "width":  widthOfCell,
+                        // "height":  (tempYPosArray[tempYPosArray.length-1] + heightOfCell) - tempYPosArray[0],
+                        "height": maxYpos - yscale2(0) + 2 ,
+                        "gameIndex": i,
+                        "fill":"none",
+                        // "pointer-events":"visible",
+                        // "cursor":"pointer"
+                    })
+                    
+                    
+
+                }
+                column.on("mouseenter", function(){
+                    var gameIndex = d3.select(this).attr("gameIndex");
+                    d3.select("#highlightRectid"+gameIndex).classed("highlighted", true).classed("nothighlighted", false);
+                });
+                column.on("mouseout", function(){
+                    var gameIndex = d3.select(this).attr("gameIndex");
+                    if(d3.select("#highlightRectid"+gameIndex).attr("selected") == "false")
+                        d3.select("#highlightRectid"+gameIndex).classed("highlighted", false).classed("nothighlighted", true);
+                });
+
+                column.on("click", function(){
+                    // d3.selectAll(".highlightRect").classed("highlighted", false).classed("nothighlighted", true);
+                    // d3.selectAll(".highlightRect").attr("selected", "false");
+                    var gameIndex = d3.select(this).attr("gameIndex");
+                    loadGame(gameIndex);
+                    // d3.select(this).select(".highlightRect").classed("highlighted", true).classed("nothighlighted", false);
+                    // d3.select("#highlightRectid"+gameIndex).classed("highlighted", true).classed("nothighlighted", false);
+                    // loadSpecificGame(gameIndex);
+                    // window.selectedGame = gameIndex;
+                    // d3.select("#highlightRectid"+gameIndex).attr("selected", true);
+                })
+                column.append("rect").attrs({
+                        "x":  xscale2(i)+3,
+                        "y":  yscale2(0) - 3,
+                        "width":  widthOfCell +1+ widthOfGameLengthBars+1 -3,
+                        // "height":  (tempYPosArray[tempYPosArray.length-1] + heightOfCell) - tempYPosArray[0],
+                        "height": maxYpos - yscale2(0) + heightOfCell + 20 ,
+                        "class": "highlightRect",
+                        "selected": "false",
+                        "id":"highlightRectid"+i,
+                        "fill":"none"
+                    }).classed("highlighted", false).classed("nothighlighted", true)
+                    .append("title").text(function(){
+                        if(window.fileNamesArray.length>0)
+                            return "File: "+window.fileNamesArray[i];
+                        else
+                            return "Game #: "+(i+1)
+                });
+                
+                // column.on("hover", function(){
+                //     d3.select(this).select(".highlightRect").classed("highlighted", true).classed("nothighlighted", false);
+                // });
+                // column.on("mouseout", function(){
+                //     d3.select(this).select(".highlightRect").classed("highlighted", false).classed("nothighlighted", true);
+                // });
+            }
+             numTies = numTies/winArray.length;
+
+            var widthOfColumn = 30;
+            // var endPosOfVis =window.endOfRows;
+
+            var x_Pos = width - rightPadding + widthOfColumn;
+
+            var endPosOfVis =  topPadding +  yscale2(newAgentIndices[newAgentIndices.length-1]) + (heightOfCell);
+
+
+            svg.append("text").attrs({
+                "x": (x_Pos - 10),
+                "y": endPosOfVis,
+                "transform":"rotate(-40,"+x_Pos+","+endPosOfVis+")",
+                "dominant-baseline":"middle",
+                "text-anchor": "end",
+                "class": "info"
+                // "font-size":"11px"
+            }).text("# Wins");
+
+            for(var i=0; i<winArray.length; i++)
+            {
+                
+                var y_Pos = yscale2(0) + 2*i*(heightOfCell + 5) + heightOfCell/2;
+
+                svg.append("text").attrs({
+                    "x": x_Pos,
+                    "y": y_Pos + heightOfCell/2,
+                    "text-anchor":"middle",
+                    "dominant-baseline": "central",
+                    "class": "info"
+                }).text(winArray[i]);
+
+                svg.append("line")
+                    .attrs({
+                        "x1": x_Pos - widthOfColumn/2,
+                        "y1": y_Pos - heightOfCell/2,
+                        "x2": x_Pos - widthOfColumn/2,
+                        "y2": endPosOfVis,
+                        "stroke":"grey",
+                        "opacity": 0.5,
+                        "stroke-width":"1px"
+                    });
+
+                if(i>0)
+                {
+                   
+                
+                    svg.append("line")
+                    .attrs({
+                        "x1": x_Pos - widthOfColumn/2,
+                        "y1": y_Pos - heightOfCell/2,
+                        "x2": x_Pos + widthOfColumn/2,
+                        "y2": y_Pos - heightOfCell/2,
+                        "stroke":"grey",
+                        "opacity": 0.5,
+                        "stroke-width":"1px"
+                    });
+                    
+                }
+
+                var sx = x_Pos - widthOfColumn/2;
+                    var widthOfLabel = 50;
+                    svg.append("line")
+                    .attrs({
+                        "x1": sx ,
+                        "y1": endPosOfVis,
+                        "x2": sx + widthOfLabel,
+                        "y2": endPosOfVis,
+                        "stroke":"lightgray",
+                        "opacity": 0.5,
+                        "stroke-width":"1px",
+                        "transform":"rotate(140,"+sx+","+endPosOfVis+")"
+                    });
+
+                
+
+            }
+
+            var x_Pos = width - rightPadding + 2*widthOfColumn;
+            // var y_Pos = 0;
+
+            // if(agentIndices.length%2 ==0)
+             var   y_Pos = yscale2(0) + (agentIndices.length/2 - 1) * (heightOfCell + 5) ;
+            
+            // var y_Pos = yscale2(0) + ((yscale2(winArray.length -1) - yscale2(0))/2) ;
+
+            svg.append("text").attrs({
+                "x": (x_Pos - 10),
+                "y": endPosOfVis,
+                "transform":"rotate(-40,"+x_Pos+","+endPosOfVis+")",
+                "dominant-baseline":"middle",
+                "text-anchor": "end",
+                "class": "info"
+                // "font-size":"11px"
+            }).text("# Ties");
+
+            svg.append("text").attrs({
+                "x": x_Pos,
+                "y": topPadding + (maxYpos - topPadding)/2 + heightOfCell/2,
+                "text-anchor":"middle",
+                "dominant-baseline": "central"
+            }).text(numTies);
+
+            
+            svg.append("line")
+            .attrs({
+                "x1": x_Pos - widthOfColumn/2,
+                "y1": yscale2(0),
+                "x2": x_Pos - widthOfColumn/2,
+                "y2": endPosOfVis,
+                "stroke":"grey",
+                "opacity": 0.5,
+                "stroke-width":"1px"
+            })
+
+            var sx = x_Pos - widthOfColumn/2;
+            var widthOfLabel = 50;
+            svg.append("line")
+            .attrs({
+                "x1": sx ,
+                "y1": endPosOfVis,
+                "x2": sx + widthOfLabel,
+                "y2": endPosOfVis,
+                "stroke":"lightgray",
+                "opacity": 0.5,
+                "stroke-width":"1px",
+                "transform":"rotate(140,"+sx+","+endPosOfVis+")"
+            })
+
+            var x_Pos = width - rightPadding + 3*widthOfColumn;
+            var y_Pos = yscale2(0) 
+
+                      
+            svg.append("line")
+            .attrs({
+                "x1": x_Pos - widthOfColumn/2,
+                "y1": y_Pos,
+                "x2": x_Pos - widthOfColumn/2,
+                "y2": endPosOfVis,
+                "stroke":"grey",
+                "opacity": 0.5,
+                "stroke-width":"1px"
+            })
+
+            var sx = x_Pos - widthOfColumn/2;
+            var widthOfLabel = 50;
+            svg.append("line")
+            .attrs({
+                "x1": sx ,
+                "y1": endPosOfVis,
+                "x2": sx + widthOfLabel,
+                "y2": endPosOfVis,
+                "stroke":"lightgray",
+                "opacity": 0.5,
+                "stroke-width":"1px",
+                "transform":"rotate(140,"+sx+","+endPosOfVis+")"
+            })
+            svg.append("g").attr("id", "metricGroup");
+
+            window.svg = svg;
+            window.xscale2 = xscale2;
+            window.yscale2 = yscale2;
+            window.overviewStatsPerGame = overviewStatsPerGame;
+            window.isTeam = isTeam;
+            window.heightOfCell = heightOfCell;
+
+            var overviewLegendGroup = svg.append("g");
+
+            overviewLegendGroup.append("text").text("\ue013").attrs({
+                "x": 0,
+                "y": 0,
+                "font-size":"10px",
+                "font-weight": "bold",
+                "dominant-baseline":"central",
+                "class":"glyphicon",
+                "fill": resultColors[0]
+            });
+            overviewLegendGroup.append("text").text(" = Win").attrs({
+                "x": 15,
+                "y": 0,
+                "font-size":"10px",
+                "dominant-baseline":"central",
+            })
+
+            overviewLegendGroup.append("text").text("\ue014").attrs({
+                "x": 0,
+                "y": 15,
+                "font-size":"10px",
+                "font-weight": "bold",
+                "dominant-baseline":"central",
+                "class":"glyphicon",
+                "fill": resultColors[1],
+                "opacity": 0.5
+            });
+            overviewLegendGroup.append("text").text(" = Lose").attrs({
+                "x": 15,
+                "y": 15,
+                "font-size":"10px",
+                "dominant-baseline":"central",
+            })
+
+            overviewLegendGroup.append("text").text("\ue030").attrs({
+                "x": 0,
+                "y": 30,
+                "font-size":"10px",
+                "font-weight": "bold",
+                "dominant-baseline":"central",
+                "class":"glyphicon",
+                "fill": resultColors[2],
+                
+            });
+            overviewLegendGroup.append("text").text(" = Tie").attrs({
+                "x": 15,
+                "y": 30,
+                "font-size":"10px",
+                "dominant-baseline":"central",
+            })
+
+            overviewLegendGroup.append("rect").attrs({
+                    "x": 70,
+                    "y": 0,
+                    "width":widthOfGameLengthBars,
+                    "height": 30,
+                    // "fill": "#38a2f0"
+                    "class": "gameLengthBar"
+                });
+            
+            overviewLegendGroup.append("text").text("height = game length").attrs({
+                "x": 80,
+                "y": 15,
+                "font-size":"10px",
+                "dominant-baseline":"central",
+            })
+
+            overviewLegendGroup.append("rect").attrs({
+                "x": -5,
+                "y": -7,
+                "width":183,
+                "height": 45,
+                "fill": "none",
+                "stroke-width":"1px",
+                "stroke":"black"
+            });
+
+            
+            
+            // overviewLegendGroup.attr("transform","translate("+ 3*(width/4)  +", "+ (endPosOfVis+35) +")");
+            // overviewLegendGroup.attr("transform","translate("+ (width-rightPadding - 210)  +", "+ (endPosOfVis+40) +")");
+            overviewLegendGroup.attr("transform","translate("+ (10)  +", "+ (endPosOfVis+15) +")");
+
+            drawOverviewMetric(window.svg, window.xscale2, window.yscale2, window.overviewStatsPerGame, window.isTeam, window.selectedMetric, window.heightOfCell);
+
+
+
+
+        }
+
+        function loadGame(gameIndex)
+        {
+            d3.selectAll(".highlightRect").classed("highlighted", false).classed("nothighlighted", true);
+            d3.selectAll(".highlightRect").attr("selected", "false");
+            // var gameIndex = d3.select(this).attr("gameIndex");
+            // d3.select(this).select(".highlightRect").classed("highlighted", true).classed("nothighlighted", false);
+            d3.select("#highlightRectid"+gameIndex).classed("highlighted", true).classed("nothighlighted", false);
+            
+            clearInterval(window.intervalId);
+            d3.select("#status").interrupt();
+            window.playClicked = false;
+
+            loadSpecificGame(gameIndex);
+            window.selectedGame = gameIndex;
+            d3.select("#highlightRectid"+gameIndex).attr("selected", true);
+        }
+        $(window).resize(function() {
+            // console.log('window was resized' + document.body.clientWidth + " x "+document.body.clientHeight);
+            // var screenWidth = document.body.clientWidth;
+            // var zoomFactor = screenWidth/1940;
+            // d3.select("#mainDiv").style("zoom", zoomFactor);
+            // d3.select("#summaryDiv").style("zoom", zoomFactor);
+        });
+
+        window.onload = function() 
+        {
+            var screenWidth = document.body.clientWidth;
+            window.zoomFactor = screenWidth/1950;
+            d3.select("#mainDiv").style("zoom", window.zoomFactor);
+            d3.select("#summaryDiv").style("zoom", window.zoomFactor);
+            // var playbackHeight = d3.select("#overviewColumnDiv").node().getBoundingClientRect().height *window.zoomFactor;
+
+            
+            // for(var key in window.metric_labelDictionary)
+            // {
+            //     var gameMetricRadioGroup = d3.select("#gameMetricRadio");
+            //     gameMetricRadioGroup.append(function() { return document.createElement("input") }).attrs({
+            //             "type": "radio",
+            //             "name": "gameMetric",
+            //             "value":key
+            //         });
+            //     gameMetricRadioGroup.text(window.metric_labelDictionary[key]);
+            //     gameMetricRadioGroup.append("br");
+            // }
+            d3.select("#modalOkButton").on("click", function(){
+                // if ($('input[name=gameMetric]:checked').length > 0) {
+                //         // do something here
+                //     }
+                    var radios = document.querySelectorAll('input[name=gameMetric]:checked');
+                    var value = radios.length>0? radios[0].value: null;
+                    console.log(value);
+                    window.selectedMetric = value;
+                    drawOverviewMetric(window.svg, window.xscale2, window.yscale2, window.overviewStatsPerGame, window.isTeam, value, window.heightOfCell);
+                    var tempdatae1 = calcEventDensityData(value, "e1", 10);
+                    var tempdatae2 = calcEventDensityData(value, "e2", 10);
+
+                    var team1Data = sumData( tempdatae1, tempdatae2);
+                    var root1 = d3.select("#histoteam1");
+                    
+
+
+                    var tempdatae3 = calcEventDensityData(value, "e3", 10);
+                    var tempdatae4 = calcEventDensityData(value, "e4", 10);
+
+                    var team2Data = sumData( tempdatae3, tempdatae4);
+
+                    var maximumNumberOfEventsInBin = d3.max([ d3.max(team1Data) , d3.max(team2Data) ]);
+                    window.histogramYScale = d3.scaleLinear().domain([0, maximumNumberOfEventsInBin]).range([0, window.maxHeightOfHistogramBars]);
+
+                    var root2 = d3.select("#histoteam2");
+
+                    drawEventHistogram(value, "team1", 10, team1Data, 1, root1);
+                    drawEventHistogram(value, "team2", 10, team2Data, 2, root2);
+
+            });
+
+            d3.select("#playbackColumnDiv").style("zoom", window.zoomFactor);
+            // d3.select("#playbackColumnDiv").attr("height", playbackHeight);
+
+            var select = $( "#reservation" );
+            var slider = $( "<div id='slider'></div>" ).insertAfter( select ).slider({
+            min: 1,
+            max: 6,
+            range: "min",
+            value: select[ 0 ].selectedIndex + 1,
+            slide: function( event, ui ) {
+                    select[ 0 ].selectedIndex = ui.value - 1;
+                }
+            });
+            $( "#minbeds" ).on( "change", function() {
+            slider.slider( "value", this.selectedIndex + 1 );
+            });
+
+            window.pommermanData = {"blob": window.gamesDataArray[0]};
+            preprocessData();
+            // drawVisualization();
+            // drawVisualization2();
+
+            
+            
+            drawOverallStatistics();
+            if(window.figureForTeaser)
+            {
+                loadGame(3);
+            }
+            else
+            {
+                loadGame(5);
+            }
+
+        };
+
+        function loadSpecificGame(gameIndex)
+        {
+            window.pommermanData = {"blob": window.gamesDataArray[gameIndex]};
+            $("#slider").slider({
+                value:1,
+                min:1,
+                max: window.pommermanData["blob"]["state"].length
+            });
+            d3.select("#frame").text("1");
+
+            preprocessData();
+            d3.selectAll(".svgText").remove();
+            // drawVisualization();
+            drawVisualization2(gameIndex);
+        }
+    
+    </script>
+
+</html>
