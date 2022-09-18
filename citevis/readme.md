@@ -2,7 +2,7 @@
 
 A visualization approach to explore the overlapping citation intents.
 
-![Untitled](screenshot.PNG)
+![Untitled](screenshot.png)
 
 # Citation:
 
