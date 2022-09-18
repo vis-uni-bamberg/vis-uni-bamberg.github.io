@@ -1,8 +1,8 @@
 # Bombalytics
 
-![Untitled](images/screenshot.png)
-
 The Bombalytics approach visualizes gameplay strategies of AI agents competiting and collaborating with each other in the [Pommerman](https://www.pommerman.com/) environment.
+
+![Untitled](images/screenshot.png)
 
 # Citation:
 
@@ -28,10 +28,10 @@ year = {2020}
 
 # Installation
 
-To run the prototype, open index.html in desktop browser.
+To run the prototype, start a local web-server and open index.html in desktop browser.
 
 For best performance use Google Chrome browser at 1920 x 1080 resolution screen.
 
 # Demo and Details
 
-For a live demo of the approach and details of the approach, please visit [this page](https://s-agarwl.github.io/publication/Agarwal2020Bombalytics).
+Live demo of the approach can be found [here](https://vis-uni-bamberg.github.io/bombalytics/), while for pdf of the research article, and video of the conference presentation, please visit [this page](https://s-agarwl.github.io/publication/Agarwal2020Bombalytics).
