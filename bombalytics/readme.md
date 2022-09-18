@@ -1,4 +1,4 @@
-# Bombalytics
+# Bombalytics: Visualization of Competition and Collaboration Strategies of Players in a Bomb Laying Game
 
 The Bombalytics approach visualizes gameplay strategies of AI agents competiting and collaborating with each other in the [Pommerman](https://www.pommerman.com/) environment.
 
