@@ -1,0 +1,197 @@
+lastname,firstname,eventtype,age,nationality
+Röntgen,Wilhelm,Birth,0,German
+Röntgen,Wilhelm,Abroad,3,German
+Röntgen,Wilhelm,Abroad,20,German
+Röntgen,Wilhelm,Doctorate,24,German
+Röntgen,Wilhelm,Marriage,27,German
+Röntgen,Wilhelm,Abroad,29,German
+Röntgen,Wilhelm,Professorship,30,German
+Röntgen,Wilhelm,Nobel Prize,56,German
+Röntgen,Wilhelm,Death,77,German
+Lorentz,Hendrik,Birth,0,Dutch
+Lorentz,Hendrik,Undergraduate,18,Dutch
+Lorentz,Hendrik,Doctorate,22,Dutch
+Lorentz,Hendrik,Professorship,24,Dutch
+Lorentz,Hendrik,Marriage,28,Dutch
+Lorentz,Hendrik,Nobel Prize,49,Dutch
+Lorentz,Hendrik,Death,74,Dutch
+Zeeman,Pieter,Birth,0,Dutch
+Zeeman,Pieter,Doctorate,28,Dutch
+Zeeman,Pieter,Abroad,28,Dutch
+Zeeman,Pieter,Abroad,29,Dutch
+Zeeman,Pieter,Marriage,29,Dutch
+Zeeman,Pieter,Professorship,35,Dutch
+Zeeman,Pieter,Nobel Prize,37,Dutch
+Zeeman,Pieter,Death,78,Dutch
+Becquerel,Henri,Birth,0,French
+Becquerel,Henri,Undergraduate,21,French
+Becquerel,Henri,Marriage,21,French
+Becquerel,Henri,Doctorate,24,French
+Becquerel,Henri,Marriage,37,French
+Becquerel,Henri,Professorship,39,French
+Becquerel,Henri,Nobel Prize,49,French
+Becquerel,Henri,Death,55,French
+Curie,Pierre,Birth,0,French
+Curie,Pierre,Undergraduate,16,French
+Curie,Pierre,Postgraduate,18,French
+Curie,Pierre,Doctorate,36,French
+Curie,Pierre,Marriage,36,French
+Curie,Pierre,Professorship,41,French
+Curie,Pierre,Nobel Prize,44,French
+Curie,Pierre,Death,46,French
+Curie,Marie,Birth,0,Polish
+Curie,Marie,Abroad,24,Polish
+Curie,Marie,Undergraduate,25,Polish
+Curie,Marie,Postgraduate,26,Polish
+Curie,Marie,Marriage,27,French
+Curie,Marie,Doctorate,35,French
+Curie,Marie,Nobel Prize,35,French
+Curie,Marie,Professorship,38,French
+Curie,Marie,Nobel Prize,43,French
+Curie,Marie,Death,66,French
+Strutt,John William,Birth,0,British
+Strutt,John William,Undergraduate,23,British
+Strutt,John William,Postgraduate,26,British
+Strutt,John William,Marriage,29,British
+Strutt,John William,Professorship,37,British
+Strutt,John William,Nobel Prize,61,British
+Strutt,John William,Death,76,British
+Lenard,Philipp,Birth,0,Hungarian
+Lenard,Philipp,Abroad,18,Hungarian
+Lenard,Philipp,Abroad,20,Hungarian
+Lenard,Philipp,Abroad,21,Hungarian
+Lenard,Philipp,Doctorate,24,Hungarian
+Lenard,Philipp,Professorship,32,Hungarian
+Lenard,Philipp,Nobel Prize,43,Hungarian
+Lenard,Philipp,Death,84,German
+Thomson,Joseph John,Birth,0,British
+Thomson,Joseph John,Undergraduate,23,British
+Thomson,Joseph John,Postgraduate,26,British
+Thomson,Joseph John,Professorship,28,British
+Thomson,Joseph John,Marriage,33,British
+Thomson,Joseph John,Nobel Prize,49,British
+Thomson,Joseph John,Death,83,British
+Michelson,Albert Abraham,Birth,0,German
+Michelson,Albert Abraham,Abroad,2,German
+Michelson,Albert Abraham,Undergraduate,20,American
+Michelson,Albert Abraham,Marriage,24,American
+Michelson,Albert Abraham,Abroad,27,American
+Michelson,Albert Abraham,Abroad,28,American
+Michelson,Albert Abraham,Professorship,30,American
+Michelson,Albert Abraham,Marriage,46,American
+Michelson,Albert Abraham,Nobel Prize,54,American
+Michelson,Albert Abraham,Death,78,American
+Lippmann,Gabriel,Birth,0,French
+Lippmann,Gabriel,Abroad,27,French
+Lippmann,Gabriel,Doctorate,29,French
+Lippmann,Gabriel,Abroad,30,French
+Lippmann,Gabriel,Professorship,33,French
+Lippmann,Gabriel,Marriage,43,French
+Lippmann,Gabriel,Nobel Prize,63,French
+Lippmann,Gabriel,Death,75,French
+Braun,Karl Ferdinand,Birth,0,German
+Braun,Karl Ferdinand,Doctorate,22,German
+Braun,Karl Ferdinand,Professorship,27,German
+Braun,Karl Ferdinand,Marriage,35,German
+Braun,Karl Ferdinand,Nobel Prize,59,German
+Braun,Karl Ferdinand,Abroad,64,German
+Braun,Karl Ferdinand,Death,67,German
+Marconi,Guglielmo,Birth,0,Italian
+Marconi,Guglielmo,Marriage,31,Italian
+Marconi,Guglielmo,Nobel Prize,35,Italian
+Marconi,Guglielmo,Marriage,53,Italian
+Marconi,Guglielmo,Death,63,Italian
+van der Waals,Johannes Diderik,Birth,0,Dutch
+van der Waals,Johannes Diderik,Marriage,27,Dutch
+van der Waals,Johannes Diderik,Doctorate,35,Dutch
+van der Waals,Johannes Diderik,Professorship,39,Dutch
+van der Waals,Johannes Diderik,Nobel Prize,72,Dutch
+van der Waals,Johannes Diderik,Death,85,Dutch
+Wien,Wilhelm,Birth,0,German
+Wien,Wilhelm,Doctorate,22,German
+Wien,Wilhelm,Marriage,34,German
+Wien,Wilhelm,Professorship,35,German
+Wien,Wilhelm,Nobel Prize,47,German
+Wien,Wilhelm,Death,64,German
+Dalén,Gustaf,Birth,0,Swedish
+Dalén,Gustaf,Postgraduate,26,Swedish
+Dalén,Gustaf,Doctorate,26,Swedish
+Dalén,Gustaf,Marriage,30,Swedish
+Dalén,Gustaf,Nobel Prize,42,Swedish
+Dalén,Gustaf,Death,68,Swedish
+Onnes,Heike Kamerlingh,Birth,0,Dutch
+Onnes,Heike Kamerlingh,Abroad,18,Dutch
+Onnes,Heike Kamerlingh,Undergraduate,20,Dutch
+Onnes,Heike Kamerlingh,Abroad,20,Dutch
+Onnes,Heike Kamerlingh,Postgraduate,25,Dutch
+Onnes,Heike Kamerlingh,Doctorate,26,Dutch
+Onnes,Heike Kamerlingh,Professorship,29,Dutch
+Onnes,Heike Kamerlingh,Marriage,33,Dutch
+Onnes,Heike Kamerlingh,Nobel Prize,58,Dutch
+Onnes,Heike Kamerlingh,Death,72,Dutch
+von Laue,Max,Birth,0,German
+von Laue,Max,Doctorate,23,German
+von Laue,Max,Marriage,30,German
+von Laue,Max,Abroad,32,German
+von Laue,Max,Professorship,32,German
+von Laue,Max,Abroad,34,German
+von Laue,Max,Nobel Prize,35,German
+von Laue,Max,Death,80,German
+Bragg,William Henry,Birth,0,British
+Bragg,William Henry,Postgraduate,22,British
+Bragg,William Henry,Abroad,24,British
+Bragg,William Henry,Professorship,24,British
+Bragg,William Henry,Abroad,35,British
+Bragg,William Henry,Abroad,36,British
+Bragg,William Henry,Marriage,37,British
+Bragg,William Henry,Abroad,46,British
+Bragg,William Henry,Nobel Prize,53,British
+Bragg,William Henry,Death,79,British
+Bragg,Lawrence,Birth,0,British
+Bragg,Lawrence,Undergraduate,18,British
+Bragg,Lawrence,Abroad,18,British
+Bragg,Lawrence,Postgraduate,22,British
+Bragg,Lawrence,Nobel Prize,25,British
+Bragg,Lawrence,Professorship,29,British
+Bragg,Lawrence,Marriage,31,British
+Bragg,Lawrence,Death,81,British
+Barkla,Charles Clover,Birth,0,British
+Barkla,Charles Clover,Undergraduate,21,British
+Barkla,Charles Clover,Postgraduate,22,British
+Barkla,Charles Clover,Marriage,30,British
+Barkla,Charles Clover,Professorship,32,British
+Barkla,Charles Clover,Nobel Prize,40,British
+Barkla,Charles Clover,Death,67,British
+Planck,Max,Birth,0,German
+Planck,Max,Postgraduate,21,German
+Planck,Max,Doctorate,22,German
+Planck,Max,Professorship,27,German
+Planck,Max,Marriage,28,German
+Planck,Max,Marriage,52,German
+Planck,Max,Nobel Prize,60,German
+Planck,Max,Death,89,German
+Stark,Johannes,Birth,0,German
+Stark,Johannes,Doctorate,23,German
+Stark,Johannes,Professorship,32,German
+Stark,Johannes,Nobel Prize,62,German
+Stark,Johannes,Death,83,German
+Guillaume,Charles Édouard,Birth,0,Swiss
+Guillaume,Charles Édouard,Doctorate,22,Swiss
+Guillaume,Charles Édouard,Abroad,22,Swiss
+Guillaume,Charles Édouard,Marriage,27,Swiss
+Guillaume,Charles Édouard,Nobel Prize,59,Swiss
+Guillaume,Charles Édouard,Death,77,Swiss
+Einstein,Albert,Birth,0,German
+Einstein,Albert,Abroad,15,German
+Einstein,Albert,Abroad,16,German
+Einstein,Albert,Postgraduate,21,None
+Einstein,Albert,Marriage,23,Swiss
+Einstein,Albert,Doctorate,26,Swiss
+Einstein,Albert,Professorship,30,Swiss
+Einstein,Albert,Abroad,32,Swiss
+Einstein,Albert,Abroad,33,Swiss
+Einstein,Albert,Abroad,34,Swiss
+Einstein,Albert,Marriage,40,Swiss
+Einstein,Albert,Nobel Prize,42,Swiss
+Einstein,Albert,Abroad,44,Swiss
+Einstein,Albert,Death,76,Swiss
